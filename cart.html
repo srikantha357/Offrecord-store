@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Review your cart, adjust quantities, and securely pay using Razorpay at Offrecord Store." />
-  <title>Offrecord Store | Cart & Checkout</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="description" content="Review your customized Offrecord items, apply coupons, and checkout with Razorpay." />
+  <title>Offrecord Store | Cart</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="cart">
@@ -13,7 +13,7 @@
     <div class="container header-inner">
       <div class="logo">OFFRECORD STORE</div>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
-      <nav class="main-nav" id="mainNav" aria-label="Primary navigation">
+      <nav class="main-nav" id="mainNav">
         <a href="index.html" data-nav="home">Home</a>
         <a href="about.html" data-nav="about">About</a>
         <a href="shop.html" data-nav="shop">Shop</a>
@@ -24,38 +24,49 @@
     </div>
   </header>
 
-  <main class="container page">
-    <h1>Your Cart</h1>
+  <main class="container section">
+    <h1 class="section-title">Your Custom Cart</h1>
+
     <div class="cart-layout">
-      <section class="panel">
-        <ul id="cartItems" class="list"></ul>
-        <div id="emptyCart" class="hidden">
-          <p class="muted">Your cart is empty right now.</p>
-          <a href="shop.html" class="btn-secondary">Continue Shopping</a>
+      <section>
+        <ul class="list" id="cartItems"></ul>
+        <div id="emptyCart" class="card hidden">
+          <div class="card-body">
+            <h3>Cart is empty</h3>
+            <p class="muted">Start customizing your quote designs.</p>
+            <a class="btn-outline" href="shop.html">Continue Shopping</a>
+          </div>
         </div>
       </section>
 
-      <aside class="panel">
-        <h2>Order Summary</h2>
+      <aside class="summary">
+        <h3>Order Summary</h3>
         <div class="summary-line"><span>Subtotal</span><strong>₹<span id="subtotal">0</span></strong></div>
-        <div class="summary-line"><span>Shipping</span><strong>₹<span id="shipping">0</span></strong></div>
-        <div class="summary-line total-line"><span>Total</span><span>₹<span id="cartTotal">0</span></span></div>
-        <p class="muted">Payment modes: UPI, Card, Net Banking, Wallet, COD.</p>
-        <button class="btn-primary" id="rzpButton">Pay with Razorpay</button>
-        <p class="field-error" id="paymentError"></p>
+        <div class="summary-line"><span>Discount</span><strong>-₹<span id="discountAmount">0</span></strong></div>
+        <div class="summary-line total"><span>Total</span><span>₹<span id="grandTotal">0</span></span></div>
+
+        <div style="margin-top:.8rem;">
+          <label for="couponCode">Coupon Code</label>
+          <input id="couponCode" class="input" placeholder="OFF10 / GYM15 / FIRSTBUY" />
+          <button id="applyCoupon" class="btn" style="margin-top:.6rem; width:100%;">Apply Coupon</button>
+          <p id="couponMessage" class="muted"></p>
+        </div>
+
+        <button id="rzpButton" class="btn" style="margin-top:.8rem;width:100%;">Pay with Razorpay</button>
+        <p id="paymentError" class="error-text"></p>
       </aside>
     </div>
   </main>
 
-  <footer class="site-footer">
+  <footer class="footer">
     <div class="container footer-grid">
-      <div><h3>Offrecord Store</h3><p class="muted">Fast checkout and premium fits.</p><p>© 2026 Offrecord Store. All rights reserved.</p></div>
+      <div><h3>Offrecord Store</h3><p class="muted">Static, secure, and customizable checkout experience.</p><p>© 2026 Offrecord Store. All rights reserved.</p></div>
       <div class="footer-links"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="cart.html">Cart</a><a href="contact.html">Contact</a></div>
-      <div><h4>Follow Us</h4><div class="socials"><span class="social-icon">IG</span><span class="social-icon">FB</span><span class="social-icon">YT</span></div></div>
+      <div><h4>Social</h4><div class="socials"><span class="social">IG</span><span class="social">FB</span><span class="social">YT</span></div></div>
     </div>
   </footer>
 
-  <div class="loading-overlay" id="paymentLoader" aria-hidden="true"><div class="loader"></div></div>
+  <div class="loading" id="paymentLoading"><div class="spinner"></div></div>
 
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="script.js"></script>
