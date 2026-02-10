@@ -3,85 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offrecord Store | Streetwear & Gym Apparel</title>
+  <meta name="description" content="Offrecord Store premium customizable fitness-streetwear storefront." />
+  <title>Offrecord Store | Custom Fitness Streetwear</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <div id="consentModal" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <h2>Welcome to Offrecord Store</h2>
-      <p>Create an account (optional) and accept cookies/cache for a better shopping experience.</p>
-      <form id="registerForm" class="register-form">
-        <label>Name <input type="text" id="regName" placeholder="Your name" /></label>
-        <label>Email <input type="email" id="regEmail" placeholder="you@example.com" /></label>
-        <label>Phone <input type="tel" id="regPhone" placeholder="+91..." /></label>
-        <label><input type="checkbox" id="cookieConsent" required /> I accept cookies and local cache storage</label>
-        <div class="modal-actions">
-          <button type="submit" class="btn-primary">Continue</button>
-          <button type="button" id="skipRegister" class="btn-ghost">Skip for now</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
+<body data-page="home">
   <header class="site-header">
-    <div class="logo">OFFRECORD STORE</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="shop.html">Shop</a>
-      <a href="cart.html">Cart</a>
-      <a href="contact.html">Contact</a>
-      <a href="account.html">My Account</a>
-    </nav>
+    <div class="container header-inner">
+      <div class="logo">OFFRECORD STORE</div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" data-nav="home">Home</a>
+        <a href="about.html" data-nav="about">About</a>
+        <a href="shop.html" data-nav="shop" data-shop-link="all">Shop</a>
+        <a href="cart.html" data-nav="cart">Cart <span class="badge" id="cartCount">0</span></a>
+        <a href="contact.html" data-nav="contact">Contact</a>
+        <a href="account.html" data-nav="account">My Account</a>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section class="hero static-scripture">
-      <div class="hero-text">
-        <h1>Wear Your Story</h1>
-        <p>Best quotes apparel, custom drops, and powerful gym fits.</p>
-        <a href="shop.html" class="btn-primary">Order Online</a>
-      </div>
-      <div class="carousel" id="modelCarousel">
-        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80" alt="Model 1" class="active" />
-        <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80" alt="Model 2" />
-        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80" alt="Model 3" />
-      </div>
+  <main class="container">
+    <section class="hero">
+      <article class="hero-card">
+        <p class="kicker">Premium D2C Fitness Streetwear</p>
+        <h1 class="hero-title">Customize your quote. Own your grind.</h1>
+        <p class="muted">You don’t buy fixed clothes here — you build your own statement with typography, fit, print position, and color.</p>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;">
+          <a href="shop.html?section=tshirts" class="btn" data-shop-link="tshirts">Explore T-Shirts</a>
+          <a href="shop.html?section=hoodies" class="btn-outline" data-shop-link="hoodies">Explore Hoodies</a>
+        </div>
+      </article>
+      <article class="hero-card">
+        <h3 style="margin-top:0;">How it works</h3>
+        <p class="muted">1) Pick category 2) Choose quote card 3) Customize print + fit + size + color 4) Add to cart 5) Checkout via Razorpay.</p>
+        <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:.8rem;">
+          <a href="shop.html?section=tshirts" class="teaser-link" data-shop-link="tshirts">T-Shirts</a>
+          <a href="shop.html?section=joggers" class="teaser-link" data-shop-link="joggers">Joggers & Baggy</a>
+          <a href="shop.html?section=hoodies" class="teaser-link" data-shop-link="hoodies">Hoodies</a>
+          <a href="shop.html?section=vests" class="teaser-link" data-shop-link="vests">Gym Vests</a>
+        </div>
+      </article>
     </section>
 
-    <section class="products-grid">
-      <h2>Featured Products</h2>
+    <section class="section" id="blogs">
+      <h2 class="section-title">From the Offrecord Journal</h2>
       <div class="grid">
-        <article class="card">
-          <h3>Scripture Oversize Tee</h3>
-          <p>₹1199</p>
-          <button class="btn-primary add-cart" data-product="Scripture Oversize Tee" data-price="1199">Add to Cart</button>
-        </article>
-        <article class="card">
-          <h3>OFFRECORD Stringer</h3>
-          <p>₹999</p>
-          <button class="btn-primary add-cart" data-product="OFFRECORD Stringer" data-price="999">Add to Cart</button>
-        </article>
-        <article class="card">
-          <h3>Custom Quote Hoodie</h3>
-          <p>₹1799</p>
-          <button class="btn-primary add-cart" data-product="Custom Quote Hoodie" data-price="1799">Add to Cart</button>
-        </article>
-      </div>
-    </section>
-
-    <section class="blogs">
-      <h2>Fashion & Fitness Blogs</h2>
-      <div class="grid">
-        <a class="blog-card" href="shop.html">How to style quote tees for college</a>
-        <a class="blog-card" href="shop.html">Top 5 gym outfit combos for comfort</a>
-        <a class="blog-card" href="shop.html">Custom apparel trend report 2026</a>
+        <a class="blog-card" href="shop.html?section=tshirts" data-shop-link="tshirts">Street quote typography trends in 2026</a>
+        <a class="blog-card" href="shop.html?section=vests" data-shop-link="vests">Best gym vest design placements</a>
+        <a class="blog-card" href="shop.html?section=hoodies" data-shop-link="hoodies">How to style oversized hoodies with purpose</a>
       </div>
     </section>
   </main>
 
-  <footer>© 2026 Offrecord Store</footer>
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Offrecord Store</h3>
+        <p class="muted">Custom quote-driven fitness-streetwear for builders, athletes, and creators.</p>
+        <p>© 2026 Offrecord Store. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="cart.html">Cart</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <h4>Social</h4>
+        <div class="socials"><span class="social">IG</span><span class="social">FB</span><span class="social">YT</span></div>
+      </div>
+    </div>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
