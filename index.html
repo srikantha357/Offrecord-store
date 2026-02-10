@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Offrecord Store - premium quote apparel, custom options and gym wear with a modern online shopping experience." />
+  <title>Offrecord Store | Home</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="home">
+  <div id="consentModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <h2>Welcome to Offrecord Store</h2>
+      <p class="muted">Create your account (optional) and allow cookies/cache for a smoother shopping journey.</p>
+      <form id="registerForm" class="register-form">
+        <label>Name <input class="input" type="text" id="regName" placeholder="Your full name" /></label>
+        <label>Email <input class="input" type="email" id="regEmail" placeholder="you@example.com" /></label>
+        <label>Phone <input class="input" type="tel" id="regPhone" placeholder="+91 98xxxxxx" /></label>
+        <label><input type="checkbox" id="cookieConsent" required /> I accept cookies and local cache</label>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Continue</button>
+          <button type="button" id="skipRegister" class="btn-secondary">Skip for now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">OFFRECORD STORE</div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+      <nav class="main-nav" id="mainNav" aria-label="Primary navigation">
+        <a href="index.html" data-nav="home">Home</a>
+        <a href="about.html" data-nav="about">About</a>
+        <a href="shop.html" data-nav="shop">Shop</a>
+        <a href="cart.html" data-nav="cart">Cart <span class="badge" id="cartCount">0</span></a>
+        <a href="contact.html" data-nav="contact">Contact</a>
+        <a href="account.html" data-nav="account">My Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container hero" aria-label="Hero section">
+      <div class="hero-left">
+        <div class="left-carousel" id="leftCarousel">
+          <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="Streetwear collection look 1" class="active" />
+          <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80" alt="Streetwear collection look 2" />
+          <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" alt="Streetwear collection look 3" />
+        </div>
+        <div class="hero-text">
+          <p class="muted">OFFRECORD COLLECTION 2026</p>
+          <h1>Wear Your Story.</h1>
+          <p>Best quote apparel, custom options, and gym outfits designed for bold self-expression.</p>
+          <a href="shop.html" class="btn-primary">Order Online</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="right-carousel" id="modelCarousel">
+          <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80" alt="Model in Offrecord apparel 1" class="active" />
+          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80" alt="Model in Offrecord apparel 2" />
+          <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80" alt="Model in Offrecord apparel 3" />
+        </div>
+      </div>
+    </section>
+
+    <section class="container section" aria-label="Featured products">
+      <h2>Featured Products</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80" alt="Scripture Oversize Tee" /></div>
+          <div class="card-body"><h3>Scripture Oversize Tee</h3><p class="price">₹1,199</p><button class="btn-primary btn-add add-cart" data-product="Scripture Oversize Tee" data-price="1199">Add to Cart</button></div>
+        </article>
+        <article class="card">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=900&q=80" alt="OFFRECORD Stringer" /></div>
+          <div class="card-body"><h3>OFFRECORD Stringer</h3><p class="price">₹999</p><button class="btn-primary btn-add add-cart" data-product="OFFRECORD Stringer" data-price="999">Add to Cart</button></div>
+        </article>
+        <article class="card">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=900&q=80" alt="Custom Quote Hoodie" /></div>
+          <div class="card-body"><h3>Custom Quote Hoodie</h3><p class="price">₹1,799</p><button class="btn-primary btn-add add-cart" data-product="Custom Quote Hoodie" data-price="1799">Add to Cart</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="container section" aria-label="Fashion blog links">
+      <h2>Fashion & Fitness Blogs</h2>
+      <div class="grid">
+        <a class="blog-card" href="shop.html">How to style quote tees for college</a>
+        <a class="blog-card" href="shop.html">Top 5 gym outfit combinations</a>
+        <a class="blog-card" href="shop.html">Custom apparel trend report</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Offrecord Store</h3>
+        <p class="muted">Best quotes apparel, custom options and gym wear for the modern generation.</p>
+        <p>© 2026 Offrecord Store. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="cart.html">Cart</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <div class="socials">
+          <span class="social-icon">IG</span>
+          <span class="social-icon">FB</span>
+          <span class="social-icon">YT</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="loading-overlay" id="paymentLoader" aria-hidden="true"><div class="loader"></div></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
