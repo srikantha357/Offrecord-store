@@ -101,6 +101,90 @@ a { color: inherit; }
   margin: 1.2rem auto 2.4rem;
 }
 
+.hero-premium {
+  align-items: stretch;
+}
+
+.hero-visual,
+.hero-model-mini {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  min-height: 500px;
+  box-shadow: var(--shadow);
+}
+
+.hero-model-mini {
+  min-height: 280px;
+}
+
+.rotator-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity .75s ease, transform 2.6s ease;
+}
+
+.rotator-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(0, 0, 0, 0.7) 6%, rgba(0, 0, 0, 0.2) 62%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.hero-model-mini .rotator-slide::after {
+  background: linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.75));
+}
+
+.rotator-slide.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-overlay-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.hero-actions {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.hero-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-how-card h3 {
+  margin-top: 0;
+}
+
+.hero-mini-caption {
+  position: absolute;
+  left: .8rem;
+  right: .8rem;
+  bottom: .8rem;
+  z-index: 2;
+  font-size: .84rem;
+  color: #dce4f3;
+  padding: .45rem .65rem;
+  border-radius: .55rem;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(16, 22, 35, 0.7);
+}
+
 .hero-card {
   background: linear-gradient(145deg, #121523, #121219);
   border: 1px solid var(--border);
@@ -205,6 +289,25 @@ a { color: inherit; }
   border-radius: .85rem;
   padding: 1rem;
   transition: .25s ease;
+}
+
+.blog-image-card {
+  padding: .65rem;
+}
+
+.blog-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: .7rem;
+  margin-bottom: .65rem;
+  background-size: cover;
+  background-position: center;
+}
+
+.blog-title {
+  display: block;
+  font-weight: 600;
 }
 
 .teaser-link:hover,
@@ -486,6 +589,7 @@ textarea {
   .footer-grid { grid-template-columns: 1fr; }
   .preview-pane { border-right: 0; border-bottom: 1px solid var(--border); }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-visual { min-height: 430px; }
 }
 
 @media (max-width: 760px) {

@@ -90,9 +90,29 @@
     markActivePage();
     updateCartBadge();
     setupHomeRedirectLinks();
+    initHomeRotators();
     setupContactForm();
     setupProfile();
     renderOrders();
+  }
+
+  function initHomeRotators() {
+    const rotators = $$('[data-rotator]');
+    rotators.forEach((rotator) => {
+      const slides = $$('.rotator-slide', rotator);
+      if (slides.length < 2) return;
+
+      let active = slides.findIndex((s) => s.classList.contains('is-active'));
+      if (active < 0) active = 0;
+      slides[active].classList.add('is-active');
+
+      const intervalMs = Number(rotator.dataset.interval) || 2800;
+      setInterval(() => {
+        slides[active].classList.remove('is-active');
+        active = (active + 1) % slides.length;
+        slides[active].classList.add('is-active');
+      }, intervalMs);
+    });
   }
 
   function initNav() {
