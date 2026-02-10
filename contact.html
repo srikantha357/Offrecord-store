@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contact Offrecord Store for customization help and product enquiries." />
+  <title>Offrecord Store | Contact</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="contact">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">OFFRECORD STORE</div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" data-nav="home">Home</a>
+        <a href="about.html" data-nav="about">About</a>
+        <a href="shop.html" data-nav="shop">Shop</a>
+        <a href="cart.html" data-nav="cart">Cart <span class="badge" id="cartCount">0</span></a>
+        <a href="contact.html" data-nav="contact">Contact</a>
+        <a href="account.html" data-nav="account">My Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container section">
+    <article class="card">
+      <div class="card-body">
+        <h1 class="section-title">Contact Offrecord</h1>
+        <p class="muted">Tell us your product requirement, quote idea, or bulk custom order details.</p>
+        <form id="contactForm" class="grid" style="grid-template-columns:1fr;">
+          <label for="contactName">Name</label>
+          <input id="contactName" class="input" placeholder="Your name" />
+          <p id="nameError" class="error-text"></p>
+
+          <label for="contactEmail">Email</label>
+          <input id="contactEmail" class="input" placeholder="you@example.com" />
+          <p id="emailError" class="error-text"></p>
+
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" rows="5" placeholder="Tell us what you want to customize"></textarea>
+          <p id="messageError" class="error-text"></p>
+
+          <button class="btn" type="submit">Send Enquiry</button>
+          <p id="contactSuccess" class="success-text hidden">Thanks! We received your enquiry.</p>
+        </form>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Offrecord Store</h3>
+        <p class="muted">Custom support for every order.</p>
+        <p>© 2026 Offrecord Store. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="cart.html">Cart</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <h4>Social</h4>
+        <div class="socials"><span class="social">IG</span><span class="social">FB</span><span class="social">YT</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
