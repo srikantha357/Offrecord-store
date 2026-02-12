@@ -3,130 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Customize premium quote designs on Offrecord T-Shirts, Hoodies, Joggers and Gym Vests." />
-  <title>Offrecord Store | Customize Apparel</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <title>Customize | Offrecord</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="shop">
   <header class="site-header">
-    <div class="container header-inner">
+    <div class="header-inner">
       <div class="logo">OFFRECORD STORE</div>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
-      <nav class="main-nav" id="mainNav">
-        <a href="index.html" data-nav="home">Home</a>
-        <a href="about.html" data-nav="about">About</a>
-        <a href="shop.html" data-nav="shop">Shop</a>
-        <a href="cart.html" data-nav="cart">Cart <span class="badge" id="cartCount">0</span></a>
-        <a href="contact.html" data-nav="contact">Contact</a>
-        <a href="account.html" data-nav="account">My Account</a>
+      <nav class="main-nav">
+        <a href="index.html">HOME</a>
+        <a href="shop.html">SHOP</a>
+        <a href="cart.html">CART <span id="cartCount">0</span></a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
-    <section class="section">
-      <h1 class="section-title">Customize Your Street-Fitness Identity</h1>
-      <p class="muted">Select a floating quote/design card and customize fabric details, fit, color, print position and size before adding to cart.</p>
-    </section>
+  <main class="product-page-layout">
+    <div class="product-visual">
+       <div id="main-product-img" class="zoom-img"></div>
+    </div>
 
-    <section class="shop-section" id="tshirts">
-      <h2 class="shop-title">1) T-Shirts</h2>
-      <div class="grid"></div>
-    </section>
+    <div class="product-details">
+      <h1 id="product-name">LOADING DESIGN...</h1>
+      <div class="product-price">Rs. 799.00 <span class="old-price">Rs. 1,199.00</span> <span class="save-tag">SAVE 33%</span></div>
+      
+      <div class="select-group">
+        <label>FIT TYPE</label>
+        <div class="btn-group" id="fitGroup">
+          <button class="opt-btn active" onclick="setFit('Regular')">REGULAR</button>
+          <button class="opt-btn" onclick="setFit('Oversized')">OVERSIZED</button>
+        </div>
+      </div>
 
-    <section class="shop-section" id="joggers">
-      <h2 class="shop-title">2) Joggers & Gym Baggy Lowers</h2>
-      <div class="grid"></div>
-    </section>
+      <div class="select-group">
+        <label>COLOUR</label>
+        <div class="btn-group" id="colorGroup">
+          <button class="opt-btn active" onclick="setColor('Black')">BLACK</button>
+          <button class="opt-btn" onclick="setColor('White')">WHITE</button>
+        </div>
+      </div>
 
-    <section class="shop-section" id="hoodies">
-      <h2 class="shop-title">3) Hoodies</h2>
-      <div class="grid"></div>
-    </section>
+      <div class="select-group">
+        <label>SIZE <span class="size-guide">Sizing guide</span></label>
+        <div class="btn-group" id="sizeGroup">
+          <button class="opt-btn">S</button>
+          <button class="opt-btn active">M</button>
+          <button class="opt-btn">L</button>
+          <button class="opt-btn">XL</button>
+          <button class="opt-btn">XXL</button>
+        </div>
+      </div>
 
-    <section class="shop-section" id="vests">
-      <h2 class="shop-title">4) Gym Vests</h2>
-      <div class="grid"></div>
-    </section>
+      <div class="action-btns">
+        <button class="btn-black-long" onclick="addToCart()">ADD TO CART</button>
+        <button class="btn-outline-long">BUY IT NOW</button>
+      </div>
+    </div>
   </main>
-
-  <div class="modal" id="customizeModal" aria-hidden="true">
-    <div class="customize-shell">
-      <section class="preview-pane">
-        <div>
-          <h3 id="previewTitle">Customize Design</h3>
-          <div class="mockup black front" id="mockup">
-            <div class="preview-quote" id="previewQuote">DISCIPLINE OVER MOTIVATION</div>
-          </div>
-          <p class="muted" style="margin-top:.7rem;">Live preview updates with your selected color, fit and print position.</p>
-        </div>
-      </section>
-
-      <section class="config-pane">
-        <div class="row" style="align-items:center;">
-          <h3 style="margin:.2rem 0;">Customization Options</h3>
-          <button id="closeCustomize" class="btn-outline">Close</button>
-        </div>
-        <p class="muted" id="currentCategory"></p>
-
-        <div class="options-grid">
-          <div class="option-group">
-            <h4>Print Position</h4>
-            <div class="inline-options" id="printPositionGroup"></div>
-          </div>
-
-          <div class="option-group">
-            <h4>Fit</h4>
-            <div class="inline-options" id="fitGroup"></div>
-          </div>
-
-          <div class="option-group">
-            <h4>Size</h4>
-            <div class="inline-options" id="sizeGroup"></div>
-          </div>
-
-          <div class="option-group">
-            <h4>Color</h4>
-            <div class="inline-options" id="colorGroup"></div>
-          </div>
-
-          <div class="option-group hidden" id="fabricOptionWrap">
-            <h4>Fabric Upgrade (Joggers only)</h4>
-            <label><input type="checkbox" id="premiumFabric" /> Premium Fabric (+₹250)</label>
-          </div>
-
-          <div class="option-group">
-            <h4>Quantity</h4>
-            <div class="qty-control">
-              <button class="qty-btn" id="qtyDec">−</button>
-              <strong id="qtyValue">1</strong>
-              <button class="qty-btn" id="qtyInc">+</button>
-            </div>
-          </div>
-
-          <div class="option-group">
-            <h4>Price</h4>
-            <p>Base: ₹<span id="basePrice">0</span></p>
-            <p>Extra charges: ₹<span id="extraCharges">0</span></p>
-            <p><strong>Final / unit: ₹<span id="finalPrice">0</span></strong></p>
-            <p><strong>Total: ₹<span id="lineTotal">0</span></strong></p>
-            <p class="stock-note" id="stockNote"></p>
-            <p class="error-text" id="customizeError"></p>
-            <button id="addCustomizedToCart" class="btn">Add Customized Item to Cart</button>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <div class="container footer-grid">
-      <div><h3>Offrecord Store</h3><p class="muted">Premium custom apparel engine for fitness and street culture.</p><p>© 2026 Offrecord Store. All rights reserved.</p></div>
-      <div class="footer-links"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="cart.html">Cart</a><a href="contact.html">Contact</a></div>
-      <div><h4>Social</h4><div class="socials"><span class="social">IG</span><span class="social">FB</span><span class="social">YT</span></div></div>
-    </div>
-  </footer>
 
   <script src="script.js"></script>
 </body>
