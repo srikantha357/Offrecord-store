@@ -269,3 +269,12 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 /* Mockup Specifics */
 .mockup.white { background: #fff; color: #000; }
 .mockup.blue { background: #1c3d5a; }
+.hero-v2 {
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out; /* Makes the change smooth */
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
