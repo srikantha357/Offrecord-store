@@ -1,28 +1,151 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .cart-container {
+      padding: 60px 80px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: flex-start;
+    }
+
+    .cart-image img {
+      width: 450px;
+      height: 550px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .cart-details {
+      flex: 1;
+    }
+
+    .cart-details h2 {
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .cart-details p {
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .option-group {
+      margin-bottom: 20px;
+    }
+
+    .option-group label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    select {
+      padding: 8px;
+      width: 200px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .buy-btn {
+      margin-top: 30px;
+      padding: 15px 30px;
+      background: black;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    .buy-btn:hover {
+      background: #333;
+    }
+
+    .total-section {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 40px;
+    }
+
+    @media(max-width: 900px){
+      .cart-item{
+        flex-direction: column;
+      }
+
+      .cart-image img{
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<h2 style="padding:40px;">Your Cart</h2>
-<div id="cart-items" style="padding:40px;"></div>
-
-<h3 id="total" style="padding:40px;"></h3>
-<button onclick="buyNow()" style="margin:40px;">BUY NOW</button>
+<div class="cart-container">
+  <h1>Your Cart</h1>
+  <div id="cart-items"></div>
+  <div class="total-section" id="total"></div>
+</div>
 
 <script>
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let container = document.getElementById("cart-items");
 let total = 0;
 
-cart.forEach(item=>{
+cart.forEach(item => {
   total += item.price;
+
   container.innerHTML += `
-    <div style="margin-bottom:20px;">
-      <img src="${item.image}" width="100">
-      <p>${item.name}</p>
-      <p>₹${item.price}</p>
+    <div class="cart-item">
+      
+      <div class="cart-image">
+        <img src="${item.image}">
+      </div>
+
+      <div class="cart-details">
+        <h2>${item.name}</h2>
+        <p>₹${item.price}</p>
+
+        <div class="option-group">
+          <label>T-Shirt Type</label>
+          <select>
+            <option>Regular</option>
+            <option>Oversized</option>
+          </select>
+        </div>
+
+        <div class="option-group">
+          <label>Colour</label>
+          <select>
+            <option>Black</option>
+            <option>White</option>
+          </select>
+        </div>
+
+        <div class="option-group">
+          <label>Size</label>
+          <select>
+            <option>S</option>
+            <option>M</option>
+            <option>L</option>
+            <option>XL</option>
+          </select>
+        </div>
+
+        <button class="buy-btn" onclick="buyNow()">BUY NOW</button>
+      </div>
+
     </div>
   `;
 });
@@ -32,7 +155,7 @@ document.getElementById("total").innerText = "Total: ₹" + total;
 function buyNow(){
   alert("Order placed successfully!");
   localStorage.removeItem("cart");
-  window.location.href="index.html";
+  window.location.href = "index.html";
 }
 </script>
 
