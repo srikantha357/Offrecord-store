@@ -1,44 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bag | OFFRECORD STORE</title>
-    <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
-<body data-page="cart">
-    <header class="site-header">
-        <div class="header-inner">
-            <div class="logo">OFFRECORD STORE</div>
-            <nav class="main-nav">
-                <a href="index.html">HOME</a>
-                <a href="shop.html">SHOP</a>
-                <a href="cart.html">BAG (<span id="cartCount">0</span>)</a>
-            </nav>
-        </div>
-    </header>
+<body>
 
-    <main class="cart-wrapper">
-        <section class="cart-items-container" id="cartItems">
-            </section>
+<h2 style="padding:40px;">Your Cart</h2>
+<div id="cart-items" style="padding:40px;"></div>
 
-        <aside class="cart-summary-box">
-            <div class="summary-content">
-                <h3>ORDER SUMMARY</h3>
-                <div class="summary-row">
-                    <span>TOTAL</span>
-                    <span id="subtotal">₹0</span>
-                </div>
-                <div class="summary-row total-row">
-                    <span>GRAND TOTAL</span>
-                    <span id="grandTotal">₹0</span>
-                </div>
-                <button class="buy-now-btn" onclick="placeOrder()">BUY NOW</button>
-                <a href="shop.html" class="continue-shopping">CONTINUE SHOPPING</a>
-            </div>
-        </aside>
-    </main>
+<h3 id="total" style="padding:40px;"></h3>
+<button onclick="buyNow()" style="margin:40px;">BUY NOW</button>
 
-    <script src="script.js"></script>
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let container = document.getElementById("cart-items");
+let total = 0;
+
+cart.forEach(item=>{
+  total += item.price;
+  container.innerHTML += `
+    <div style="margin-bottom:20px;">
+      <img src="${item.image}" width="100">
+      <p>${item.name}</p>
+      <p>₹${item.price}</p>
+    </div>
+  `;
+});
+
+document.getElementById("total").innerText = "Total: ₹" + total;
+
+function buyNow(){
+  alert("Order placed successfully!");
+  localStorage.removeItem("cart");
+  window.location.href="index.html";
+}
+</script>
+
 </body>
 </html>
