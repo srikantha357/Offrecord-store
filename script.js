@@ -73,31 +73,50 @@ function updateCartCount() {
 
 function renderCart() {
     const container = document.getElementById('cartItems');
-    let total = 0;
-    
+    if (!container) return;
+
     if (cart.length === 0) {
-        container.innerHTML = "<h2>Your bag is empty.</h2>";
+        container.innerHTML = "<h2 style='font-size:3rem; font-weight:900;'>YOUR BAG IS EMPTY.</h2>";
         return;
     }
 
+    let total = 0;
     container.innerHTML = cart.map((item, idx) => {
-        total += item.price;
+        total += Number(item.price);
         return `
-            <div class="cart-item">
-                <img src="${item.img}" class="cart-img">
-                <div style="flex:1">
-                    <div class="product-name">${item.name}</div>
-                    <div class="new-price">₹${item.price}</div>
-                    <select class="add-btn" style="width:100px; margin: 10px 0;">
-                        <option>Size: L</option><option>Size: M</option>
+            <div class="cart-item-bonkers">
+                <div class="cart-item-left">
+                    <img src="${item.img}" alt="${item.title}">
+                </div>
+                <div class="cart-item-right">
+                    <h2>${item.title}</h2>
+                    <div class="price-big">₹ ${item.price}</div>
+                    
+                    <div class="label-muted">SIZE</div>
+                    <select class="cart-select">
+                        <option>${item.size || 'OVERSIZED L'}</option>
+                        <option>OVERSIZED M</option>
+                        <option>OVERSIZED XL</option>
                     </select>
-                    <button onclick="removeItem(${idx})" style="display:block; font-size:0.7rem; cursor:pointer;">REMOVE</button>
+
+                    <div class="label-muted">QUANTITY</div>
+                    <div style="display:flex; align-items:center; gap:15px; margin-top:10px;">
+                        <button class="opt-btn" onclick="updateQty(${idx}, -1)">-</button>
+                        <strong>${item.qty || 1}</strong>
+                        <button class="opt-btn" onclick="updateQty(${idx}, 1)">+</button>
+                    </div>
+
+                    <button class="label-muted" style="background:none; border:none; text-align:left; cursor:pointer; text-decoration:underline; margin-top:30px;" onclick="removeItem(${idx})">
+                        REMOVE ITEM
+                    </button>
                 </div>
             </div>
         `;
     }).join('');
 
+    document.getElementById('subtotal').innerText = `₹${total}`;
     document.getElementById('grandTotal').innerText = `₹${total}`;
+}
 }
 
 function removeItem(idx) {
