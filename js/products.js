@@ -1,11 +1,11 @@
 const products = [];
 
-for (let i = 1; i <= 40; i++) {
+for (let i = 1; i <= 34; i++) {
   products.push({
     id: i,
-    name: "Oversized Tee " + i,
+    name: "OVERSIZED TEE " + i,
     price: 799,
     oldPrice: 999,
-    image: "https://picsum.photos/300/400?random=" + i
+    image: "assets/products/tee" + i + ".jpg"
   });
 }
