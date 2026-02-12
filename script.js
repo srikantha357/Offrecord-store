@@ -1,153 +1,139 @@
 /**
- * OFFRECORD STORE - Core Logic 2026
- * Bright Streetwear Edition
+ * OFFRECORD STORE - Master Logic 2026
+ * Bright Anime Edition
  */
 
-// --- 1. SLIDESHOW CONFIGURATION ---
+// --- 1. DATA CONFIGURATION ---
 const SLIDESHOW_IMAGES = [
     'images/ome 1.jpg',
     'images/ome2.jpg',
     'images/ome3.jpg'
 ];
 
+const SHOP_CONFIG = {
+    tshirts: { 
+        name: "Anime Graphic Tee", 
+        base: 799, 
+        positions: ['Front', 'Back'], 
+        fits: ['Regular', 'Oversized'], 
+        colors: ['Black', 'White'],
+        sizes: ['S', 'M', 'L', 'XL', 'XXL']
+    }
+};
+
+const ANIME_PRODUCTS = [
+    { id: 1, title: "SOLO LEVELING EDIT", img: "images/anime1.jpg" },
+    { id: 2, title: "JUJUTSU KAISEN EDIT", img: "images/anime2.jpg" },
+    { id: 3, title: "AOT FREEDOM EDIT", img: "images/anime3.jpg" }
+];
+
+// --- 2. STATE MANAGEMENT ---
+let cart = JSON.parse(localStorage.getItem('offrecord_cart')) || [];
+let currentItem = { qty: 1, base: 799, extra: 0, selectedColor: 'White', selectedFit: 'Oversized', selectedSize: 'L' };
 let slideIndex = 0;
+
+// --- 3. INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount();
+    handleNavigation();
+
+    const pageType = document.body.dataset.page;
+
+    if (pageType === 'home') initSlideshow();
+    if (pageType === 'shop') initShop();
+    if (pageType === 'cart') renderCart();
+});
+
+// --- 4. CORE MODULES ---
+
+function handleNavigation() {
+    const navToggle = document.getElementById('navToggle');
+    const mainNav = document.getElementById('mainNav');
+    if (navToggle && mainNav) {
+        navToggle.addEventListener('click', () => mainNav.classList.toggle('show'));
+    }
+}
 
 function initSlideshow() {
     const hero = document.getElementById('hero-slideshow');
     if (!hero) return;
 
-    function changeBg() {
-        // UPDATED: Removed the dark linear-gradient for a bright look
+    function nextSlide() {
         hero.style.backgroundImage = `url('${SLIDESHOW_IMAGES[slideIndex]}')`;
         slideIndex = (slideIndex + 1) % SLIDESHOW_IMAGES.length;
     }
-
-    changeBg(); // Initial load
-    setInterval(changeBg, 5000); // Change every 5 seconds
+    nextSlide();
+    setInterval(nextSlide, 5000);
 }
 
-// --- 2. PRODUCT & CONFIG DATA ---
-const CONFIG = {
-    tshirts: { name: "Oversized Tee", base: 799, positions: ['Front', 'Back', 'Pocket'], fits: ['Regular', 'Oversized'], colors: ['Black', 'White', 'Blue'] },
-    joggers: { name: "Baggy Lowers", base: 1299, positions: ['Left Thigh', 'Full Leg'], fits: ['Tapered', 'Baggy'], colors: ['Black', 'Grey'] },
-    hoodies: { name: "Heavyweight Hoodie", base: 1899, positions: ['Chest', 'Back'], fits: ['Heavyweight'], colors: ['Black', 'Oatmeal'] },
-    vests: { name: "Gym Vest", base: 699, positions: ['Center'], fits: ['Stringer', 'Standard'], colors: ['Black', 'Red'] }
-};
-
-let cart = JSON.parse(localStorage.getItem('offrecord_cart')) || [];
-let currentItem = { qty: 1, base: 0, extra: 0, selectedColor: 'Black' };
-
-// --- 3. INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-    updateCartCount();
-    initSlideshow(); // Start the background rotation
-    
-    // Mobile Nav Toggle
-    const navToggle = document.getElementById('navToggle');
-    const mainNav = document.getElementById('mainNav');
-    if (navToggle && mainNav) {
-        navToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('show');
-        });
-    }
-
-    // Initialize Shop if on Shop Page
-    if (document.body.dataset.page === 'shop') {
-        initShop();
-    }
-});
-
-// --- 4. SHOP & CUSTOMIZATION LOGIC ---
 function initShop() {
-    const closeModal = document.getElementById('closeCustomize');
-    if (closeModal) {
-        closeModal.addEventListener('click', () => {
-            document.getElementById('customizeModal').classList.remove('show');
-        });
+    const grid = document.querySelector('.grid');
+    const tshirtsSection = document.querySelector('#tshirts .grid');
+    
+    // Hide unused sections provided in master HTML
+    ['joggers', 'hoodies', 'vests'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    if (tshirtsSection) {
+        tshirtsSection.innerHTML = ANIME_PRODUCTS.map(prod => `
+            <div class="card">
+                <div class="product-image" style="background-image: url('${prod.img}'); height:300px; background-size:cover;"></div>
+                <div class="card-body" style="text-align:center;">
+                    <h3>${prod.title}</h3>
+                    <p class="price">₹799</p>
+                    <button onclick="openCustomizer('tshirts', '${prod.title}')" class="btn" style="width:100%;">Customize</button>
+                </div>
+            </div>
+        `).join('');
     }
 }
 
-window.openCustomize = (category, title = "CUSTOM DESIGN") => {
+window.openCustomizer = (category, title) => {
     const modal = document.getElementById('customizeModal');
-    const cfg = CONFIG[category];
-    
-    if (!cfg) return;
+    const cfg = SHOP_CONFIG[category];
+    if (!modal || !cfg) return;
 
-    currentItem = { 
-        ...cfg, 
-        category, 
-        title, 
-        qty: 1, 
-        extra: 0, 
-        selectedColor: cfg.colors[0],
-        selectedFit: cfg.fits[0],
-        selectedPos: cfg.positions[0]
-    };
+    currentItem = { ...cfg, category, title, qty: 1, selectedColor: 'White', selectedFit: 'Oversized', selectedSize: 'L' };
     
     document.getElementById('previewTitle').innerText = title;
-    document.getElementById('currentCategory').innerText = cfg.name;
     document.getElementById('basePrice').innerText = cfg.base;
-    
-    renderOptions('positionGroup', cfg.positions, 'selectedPos');
+    document.getElementById('finalPrice').innerText = cfg.base;
+    document.getElementById('lineTotal').innerText = cfg.base;
+
     renderOptions('fitGroup', cfg.fits, 'selectedFit');
     renderOptions('colorGroup', cfg.colors, 'selectedColor');
-    
-    calculatePrice();
+    renderOptions('sizeGroup', cfg.sizes, 'selectedSize');
+    renderOptions('printPositionGroup', cfg.positions, 'selectedPos');
+
     modal.classList.add('show');
 };
 
 function renderOptions(groupId, options, stateKey) {
     const container = document.getElementById(groupId);
     if (!container) return;
-
-    container.innerHTML = options.map((opt, i) => 
-        `<button class="opt-btn ${i === 0 ? 'active' : ''}" 
-            onclick="updateSelection(this, '${stateKey}', '${opt}')">${opt}</button>`
-    ).join('');
+    container.innerHTML = options.map(opt => `
+        <button class="opt-btn ${currentItem[stateKey] === opt ? 'active' : ''}" 
+            onclick="updateSelection(this, '${stateKey}', '${opt}')">${opt}</button>
+    `).join('');
 }
 
 window.updateSelection = (btn, stateKey, value) => {
     btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentItem[stateKey] = value;
-
-    if (stateKey === 'selectedColor') {
-        const mockup = document.getElementById('mockup');
-        if (mockup) {
-            mockup.className = `mockup ${value.toLowerCase()}`;
-        }
-    }
-    calculatePrice();
 };
 
-function calculatePrice() {
-    const total = (currentItem.base + currentItem.extra) * currentItem.qty;
-    const finalPriceElement = document.getElementById('finalPrice');
-    const lineTotalElement = document.getElementById('lineTotal');
+// --- 5. CART LOGIC ---
 
-    if (finalPriceElement) finalPriceElement.innerText = currentItem.base + currentItem.extra;
-    if (lineTotalElement) lineTotalElement.innerText = total;
-}
-
-// --- 5. CART ACTIONS ---
 window.addToCart = () => {
-    const cartItem = {
-        id: Date.now(),
-        category: currentItem.category,
-        name: currentItem.name,
-        title: currentItem.title,
-        color: currentItem.selectedColor,
-        fit: currentItem.selectedFit,
-        position: currentItem.selectedPos,
-        price: currentItem.base + currentItem.extra,
-        qty: currentItem.qty
-    };
-
-    cart.push(cartItem);
+    const item = { id: Date.now(), ...currentItem, price: currentItem.base };
+    cart.push(item);
     localStorage.setItem('offrecord_cart', JSON.stringify(cart));
     updateCartCount();
     document.getElementById('customizeModal').classList.remove('show');
-    alert(`${currentItem.name} added to cart!`);
+    alert("Added to Cart!");
 };
 
 function updateCartCount() {
@@ -155,9 +141,48 @@ function updateCartCount() {
     if (badge) badge.innerText = cart.length;
 }
 
-window.changeQty = (num) => {
-    currentItem.qty = Math.max(1, currentItem.qty + num);
-    const qtyDisplay = document.getElementById('itemQty');
-    if (qtyDisplay) qtyDisplay.innerText = currentItem.qty;
-    calculatePrice();
+function renderCart() {
+    const container = document.getElementById('cartItems');
+    if (!container) return;
+    
+    if (cart.length === 0) {
+        document.getElementById('emptyCart').classList.remove('hidden');
+        return;
+    }
+
+    container.innerHTML = cart.map((item, index) => `
+        <li class="card" style="margin-bottom:1rem; padding:1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong>${item.title}</strong><br>
+                    <small>${item.selectedFit} | ${item.selectedColor} | Size: ${item.selectedSize}</small>
+                </div>
+                <div>₹${item.price}</div>
+                <button onclick="removeFromCart(${index})" style="background:none; border:none; cursor:pointer;">✕</button>
+            </div>
+        </li>
+    `).join('');
+    
+    calculateTotals();
+}
+
+window.removeFromCart = (index) => {
+    cart.splice(index, 1);
+    localStorage.setItem('offrecord_cart', JSON.stringify(cart));
+    renderCart();
+    updateCartCount();
 };
+
+function calculateTotals() {
+    const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+    const subElement = document.getElementById('subtotal');
+    const grandElement = document.getElementById('grandTotal');
+    if (subElement) subElement.innerText = subtotal;
+    if (grandElement) grandElement.innerText = subtotal;
+}
+
+// Close Modal
+const closeBtn = document.getElementById('closeCustomize');
+if (closeBtn) {
+    closeBtn.onclick = () => document.getElementById('customizeModal').classList.remove('show');
+}
