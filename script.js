@@ -1,9 +1,32 @@
 /**
  * OFFRECORD STORE - Core Logic 2026
- * Streetwear Edition
+ * Streetwear Edition + Background Slideshow
  */
 
-// 1. PRODUCT & CONFIG DATA
+// --- 1. SLIDESHOW CONFIGURATION ---
+const SLIDESHOW_IMAGES = [
+    'images/ome 1.jpg',
+    'images/ome2.jpg',
+    'images/ome3.jpg'
+];
+
+let slideIndex = 0;
+
+function initSlideshow() {
+    const hero = document.getElementById('hero-slideshow');
+    if (!hero) return;
+
+    function changeBg() {
+        // We use a linear-gradient overlay so the white text stays readable
+        hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${SLIDESHOW_IMAGES[slideIndex]}')`;
+        slideIndex = (slideIndex + 1) % SLIDESHOW_IMAGES.length;
+    }
+
+    changeBg(); // Initial load
+    setInterval(changeBg, 5000); // Change every 5 seconds
+}
+
+// --- 2. PRODUCT & CONFIG DATA ---
 const CONFIG = {
     tshirts: { name: "Oversized Tee", base: 799, positions: ['Front', 'Back', 'Pocket'], fits: ['Regular', 'Oversized'], colors: ['Black', 'White', 'Blue'] },
     joggers: { name: "Baggy Lowers", base: 1299, positions: ['Left Thigh', 'Full Leg'], fits: ['Tapered', 'Baggy'], colors: ['Black', 'Grey'] },
@@ -14,9 +37,10 @@ const CONFIG = {
 let cart = JSON.parse(localStorage.getItem('offrecord_cart')) || [];
 let currentItem = { qty: 1, base: 0, extra: 0, selectedColor: 'Black' };
 
-// 2. INITIALIZATION
+// --- 3. INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
+    initSlideshow(); // Start the background rotation
     
     // Mobile Nav Toggle
     const navToggle = document.getElementById('navToggle');
@@ -33,9 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 3. SHOP & CUSTOMIZATION LOGIC
+// --- 4. SHOP & CUSTOMIZATION LOGIC ---
 function initShop() {
-    // Close Modal Logic
     const closeModal = document.getElementById('closeCustomize');
     if (closeModal) {
         closeModal.addEventListener('click', () => {
@@ -44,16 +67,12 @@ function initShop() {
     }
 }
 
-/**
- * Triggered when a user clicks "Customize" on a product card
- */
 window.openCustomize = (category, title = "CUSTOM DESIGN") => {
     const modal = document.getElementById('customizeModal');
     const cfg = CONFIG[category];
     
     if (!cfg) return;
 
-    // Set Initial Item State
     currentItem = { 
         ...cfg, 
         category, 
@@ -65,12 +84,10 @@ window.openCustomize = (category, title = "CUSTOM DESIGN") => {
         selectedPos: cfg.positions[0]
     };
     
-    // Update Modal UI
     document.getElementById('previewTitle').innerText = title;
     document.getElementById('currentCategory').innerText = cfg.name;
     document.getElementById('basePrice').innerText = cfg.base;
     
-    // Render Selection Buttons
     renderOptions('positionGroup', cfg.positions, 'selectedPos');
     renderOptions('fitGroup', cfg.fits, 'selectedFit');
     renderOptions('colorGroup', cfg.colors, 'selectedColor');
@@ -79,9 +96,6 @@ window.openCustomize = (category, title = "CUSTOM DESIGN") => {
     modal.classList.add('show');
 };
 
-/**
- * Renders the toggle buttons inside the modal
- */
 function renderOptions(groupId, options, stateKey) {
     const container = document.getElementById(groupId);
     if (!container) return;
@@ -92,26 +106,17 @@ function renderOptions(groupId, options, stateKey) {
     ).join('');
 }
 
-/**
- * Handles clicking on options (Color, Fit, Position)
- */
 window.updateSelection = (btn, stateKey, value) => {
-    // Update active UI state
     btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
-    // Update Data
     currentItem[stateKey] = value;
 
-    // Visual Feedback: Change Mockup Color
     if (stateKey === 'selectedColor') {
         const mockup = document.getElementById('mockup');
         if (mockup) {
-            // Remove previous color classes and add new one
             mockup.className = `mockup ${value.toLowerCase()}`;
         }
     }
-
     calculatePrice();
 };
 
@@ -124,7 +129,7 @@ function calculatePrice() {
     if (lineTotalElement) lineTotalElement.innerText = total;
 }
 
-// 4. CART ACTIONS
+// --- 5. CART ACTIONS ---
 window.addToCart = () => {
     const cartItem = {
         id: Date.now(),
@@ -140,13 +145,8 @@ window.addToCart = () => {
 
     cart.push(cartItem);
     localStorage.setItem('offrecord_cart', JSON.stringify(cart));
-    
     updateCartCount();
-    
-    // Close modal and show success
     document.getElementById('customizeModal').classList.remove('show');
-    
-    // Custom Toast or Alert
     alert(`${currentItem.name} added to cart!`);
 };
 
@@ -155,7 +155,6 @@ function updateCartCount() {
     if (badge) badge.innerText = cart.length;
 }
 
-// 5. QUANTITY LOGIC (Optional helper)
 window.changeQty = (num) => {
     currentItem.qty = Math.max(1, currentItem.qty + num);
     const qtyDisplay = document.getElementById('itemQty');
