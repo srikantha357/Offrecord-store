@@ -1,72 +1,114 @@
-/**
- * OFFRECORD STORE - Master Logic 2026
- * Bonkers Studio Edition
- */
-
-const SLIDESHOW_IMAGES = ['images/ome 1.jpg', 'images/ome2.jpg', 'images/ome3.jpg'];
-const ANIME_PRODUCTS = [
-    { id: 1, title: "SOLO LEVELING", img: "images/anime1.jpg" },
-    { id: 2, title: "JUJUTSU KAISEN", img: "images/anime2.jpg" },
-    { id: 3, title: "ATTACK ON TITAN", img: "images/anime3.jpg" }
+// Dummy Data
+const DUMMY_PRODUCTS = [
+    { id: 1, name: "Oversized Anime Tee", price: 799, oldPrice: 1299, img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=800" },
+    { id: 2, name: "Urban Cargo Joggers", price: 1499, oldPrice: 1999, img: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=800" },
+    { id: 3, name: "Street Graffiti Hoodie", price: 2499, oldPrice: 2999, img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800" },
+    { id: 4, name: "Boxy Fit Denim Jacket", price: 3999, oldPrice: 4999, img: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=800" }
 ];
 
-let cart = JSON.parse(localStorage.getItem('offrecord_cart')) || [];
-let currentItem = { qty: 1, base: 799, selectedColor: 'White', selectedFit: 'Oversized', selectedSize: 'L' };
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let page = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
-    const page = document.body.dataset.page;
-    if (page === 'home') initSlideshow();
-    if (page === 'shop') initShop();
-    
-    // Simple Nav Toggle
-    document.getElementById('navToggle')?.addEventListener('click', () => {
-        document.getElementById('mainNav').classList.toggle('show');
-    });
+    const grid = document.getElementById('productGrid');
+    if (grid) {
+        loadProducts(); // Initial Load
+        window.addEventListener('scroll', handleInfiniteScroll);
+    }
+    if (document.getElementById('cartItems')) renderCart();
 });
 
-function initSlideshow() {
-    const hero = document.getElementById('hero-slideshow');
-    let idx = 0;
-    setInterval(() => {
-        hero.style.backgroundImage = `url('${SLIDESHOW_IMAGES[idx]}')`;
-        idx = (idx + 1) % SLIDESHOW_IMAGES.length;
-    }, 5000);
+// Load Products with Fade-in
+function loadProducts() {
+    const grid = document.getElementById('productGrid');
+    const loading = document.getElementById('loading');
+    
+    loading.style.display = 'block';
+
+    setTimeout(() => {
+        DUMMY_PRODUCTS.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => addToCart(p);
+            card.innerHTML = `
+                <div class="img-wrap">
+                    <span class="discount-badge">SAVE 20%</span>
+                    <img src="${p.img}" alt="${p.name}">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">${p.name}</div>
+                    <div class="price-row">
+                        <span class="new-price">₹${p.price}</span>
+                        <span class="old-price">₹${p.oldPrice}</span>
+                    </div>
+                    <button class="add-btn">ADD TO CART</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        loading.style.display = 'none';
+        page++;
+    }, 1000);
 }
 
-function initShop() {
-    const grid = document.querySelector('.product-display-grid');
-    if (!grid) return;
-
-    grid.innerHTML = ANIME_PRODUCTS.map(prod => `
-        <div class="product-card" onclick="openCustomizer('tshirts', '${prod.title}')">
-            <div class="product-image" style="background-image: url('${prod.img}');"></div>
-            <div class="product-info">
-                <h3>${prod.title}</h3>
-                <p class="price">INR 799.00</p>
-            </div>
-        </div>
-    `).join('');
+// Infinite Scroll Logic
+function handleInfiniteScroll() {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+        if (page < 5) loadProducts(); // Limit for dummy data
+    }
 }
 
-window.openCustomizer = (cat, title) => {
-    currentItem.title = title;
-    document.getElementById('previewTitle').innerText = title;
-    document.getElementById('customizeModal').classList.add('show');
-    // Rendering logic for buttons remains the same as before...
-};
-
-window.addToCart = () => {
-    cart.push({...currentItem, id: Date.now()});
-    localStorage.setItem('offrecord_cart', JSON.stringify(cart));
-    updateCartCount();
-    document.getElementById('customizeModal').classList.remove('show');
-    alert("PRODUCT ADDED TO BAG");
-};
+// Cart Functionality
+function addToCart(product) {
+    cart.push({ ...product, cartId: Date.now(), qty: 1 });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    window.location.href = 'cart.html'; // Direct redirect as requested
+}
 
 function updateCartCount() {
-    const badge = document.getElementById('cartCount');
-    if (badge) badge.innerText = cart.length;
+    const badges = document.querySelectorAll('.badge');
+    badges.forEach(b => b.innerText = cart.length);
 }
 
-window.closeModal = () => document.getElementById('customizeModal').classList.remove('show');
+function renderCart() {
+    const container = document.getElementById('cartItems');
+    let total = 0;
+    
+    if (cart.length === 0) {
+        container.innerHTML = "<h2>Your bag is empty.</h2>";
+        return;
+    }
+
+    container.innerHTML = cart.map((item, idx) => {
+        total += item.price;
+        return `
+            <div class="cart-item">
+                <img src="${item.img}" class="cart-img">
+                <div style="flex:1">
+                    <div class="product-name">${item.name}</div>
+                    <div class="new-price">₹${item.price}</div>
+                    <select class="add-btn" style="width:100px; margin: 10px 0;">
+                        <option>Size: L</option><option>Size: M</option>
+                    </select>
+                    <button onclick="removeItem(${idx})" style="display:block; font-size:0.7rem; cursor:pointer;">REMOVE</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('grandTotal').innerText = `₹${total}`;
+}
+
+function removeItem(idx) {
+    cart.splice(idx, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+    updateCartCount();
+}
+
+function placeOrder() {
+    alert("Order placed successfully!");
+    localStorage.removeItem('cart');
+    window.location.href = 'index.html';
+}
