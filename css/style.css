@@ -318,3 +318,36 @@ button:hover {
   width: 30px;
   filter: invert(1);
 }
+.whatsapp-float,
+.instagram-float {
+  position: fixed;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  text-decoration: none;
+  z-index: 99999;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.whatsapp-float {
+  background: #25D366;
+  bottom: 25px;
+  left: 25px;
+}
+
+.instagram-float {
+  background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);
+  bottom: 25px;
+  right: 25px;
+}
+
+.whatsapp-float:hover,
+.instagram-float:hover {
+  transform: scale(1.15);
+}
