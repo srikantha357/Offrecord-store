@@ -1,44 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offrecord Store | Streetwear</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <title>OFFRECORD | STREETWEAR</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body data-page="home">
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="logo">OFFRECORD STORE</div>
-      <nav class="main-nav">
-        <a href="index.html">HOME</a>
-        <a href="shop.html">SHOP</a>
-        <a href="cart.html">CART <span id="cartCount">0</span></a>
-        <a href="account.html">ACCOUNT</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero-full" id="hero-slideshow">
-      <div class="hero-overlay">
-        <h1>NEW ARRIVALS</h1>
-        <div class="hero-btns">
-          <a href="#shop-grid" class="btn-white">SHOP NOW</a>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="logo">OFFRECORD</div>
+            <nav class="main-nav">
+                <a href="index.html">HOME</a>
+                <a href="index.html#shop">SHOP</a>
+                <a href="contact.html">CONTACT</a>
+            </nav>
+            <div class="nav-icons">
+                <a href="account.html">USER</a>
+                <div class="cart-icon" onclick="location.href='cart.html'">
+                    BAG <span class="badge">0</span>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
+    </header>
 
-    <section class="container" id="shop-grid">
-      <div class="filter-bar">
-        <span>FILTER AND SORT</span>
-        <span>PRODUCT COUNT: <span id="prod-count">0</span></span>
-      </div>
-      <div class="product-display-grid" id="main-product-grid">
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>MEN'S NEW<br>ARRIVALS</h1>
         </div>
     </section>
-  </main>
 
-  <script src="script.js"></script>
+    <section class="shop-section" id="shop">
+        <div class="product-grid" id="productGrid">
+            </div>
+        <div id="loading" style="display:none;">COLLECTING DROPS...</div>
+    </section>
+
+    <script src="script.js"></script>
 </body>
 </html>
