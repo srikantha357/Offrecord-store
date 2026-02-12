@@ -2,22 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BAG | OFFRECORD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bag | OFFRECORD STORE</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <header class="site-header">...</header>
+<body data-page="cart">
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="logo">OFFRECORD STORE</div>
+            <nav class="main-nav">
+                <a href="index.html">HOME</a>
+                <a href="shop.html">SHOP</a>
+                <a href="cart.html">BAG (<span id="cartCount">0</span>)</a>
+            </nav>
+        </div>
+    </header>
 
-    <main class="cart-container">
-        <div id="cartItems">
+    <main class="cart-wrapper">
+        <section class="cart-items-container" id="cartItems">
+            </section>
+
+        <aside class="cart-summary-box">
+            <div class="summary-content">
+                <h3>ORDER SUMMARY</h3>
+                <div class="summary-row">
+                    <span>TOTAL</span>
+                    <span id="subtotal">₹0</span>
+                </div>
+                <div class="summary-row total-row">
+                    <span>GRAND TOTAL</span>
+                    <span id="grandTotal">₹0</span>
+                </div>
+                <button class="buy-now-btn" onclick="placeOrder()">BUY NOW</button>
+                <a href="shop.html" class="continue-shopping">CONTINUE SHOPPING</a>
             </div>
-        <aside class="summary">
-            <h2 class="logo" style="font-size: 1rem;">ORDER SUMMARY</h2>
-            <div style="display:flex; justify-content:space-between; margin-top:20px;">
-                <span>TOTAL</span>
-                <span id="grandTotal">₹0</span>
-            </div>
-            <button class="buy-now-btn" onclick="placeOrder()">BUY NOW</button>
         </aside>
     </main>
 
