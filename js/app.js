@@ -3,7 +3,7 @@ const container = document.getElementById("product-container");
 const loader = document.getElementById("loader");
 
 let currentIndex = 0;
-const itemsPerLoad = 8;
+const itemsPerLoad = 4;
 
 // LOAD PRODUCTS
 function loadProducts() {
