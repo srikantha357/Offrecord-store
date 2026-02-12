@@ -1,6 +1,6 @@
 /**
  * OFFRECORD STORE - Core Logic 2026
- * Streetwear Edition + Background Slideshow
+ * Bright Streetwear Edition
  */
 
 // --- 1. SLIDESHOW CONFIGURATION ---
@@ -17,8 +17,8 @@ function initSlideshow() {
     if (!hero) return;
 
     function changeBg() {
-        // We use a linear-gradient overlay so the white text stays readable
-        hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${SLIDESHOW_IMAGES[slideIndex]}')`;
+        // UPDATED: Removed the dark linear-gradient for a bright look
+        hero.style.backgroundImage = `url('${SLIDESHOW_IMAGES[slideIndex]}')`;
         slideIndex = (slideIndex + 1) % SLIDESHOW_IMAGES.length;
     }
 
