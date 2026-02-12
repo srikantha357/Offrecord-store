@@ -1,46 +1,41 @@
-// PRODUCT CONTAINER
 const container = document.getElementById("product-container");
-const loader = document.getElementById("loader");
+const loadMoreBtn = document.getElementById("load-more-btn");
 
 let currentIndex = 0;
-const itemsPerLoad = 4;
+const itemsPerLoad = 8;
 
 // LOAD PRODUCTS
 function loadProducts() {
-  if (!container) return;
-
-  loader.style.display = "block";
-
-  setTimeout(() => {
-    for (let i = currentIndex; i < currentIndex + itemsPerLoad; i++) {
-      if (i >= products.length) break;
-
-      const p = products[i];
-
-      container.innerHTML += `
-        <div class="product-card">
-          <img src="${p.image}" loading="lazy" onclick="addToCart(${p.id})">
-          <div class="product-info">
-            <h4>${p.name}</h4>
-            <p class="old-price">₹${p.oldPrice}</p>
-            <p class="price">₹${p.price}</p>
-            <button onclick="addToCart(${p.id})">Add to Cart</button>
-          </div>
-        </div>
-      `;
+  for (let i = currentIndex; i < currentIndex + itemsPerLoad; i++) {
+    if (i >= products.length) {
+      loadMoreBtn.style.display = "none";
+      break;
     }
 
-    currentIndex += itemsPerLoad;
-    loader.style.display = "none";
-  }, 800);
+    const p = products[i];
+
+    container.innerHTML += `
+      <div class="product-card">
+        <img src="${p.image}" loading="lazy" onclick="addToCart(${p.id})">
+        <div class="product-info">
+          <h4>${p.name}</h4>
+          <p class="old-price">₹${p.oldPrice}</p>
+          <p class="price">₹${p.price}</p>
+          <button onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      </div>
+    `;
+  }
+
+  currentIndex += itemsPerLoad;
+
+  if (currentIndex >= products.length) {
+    loadMoreBtn.style.display = "none";
+  }
 }
 
-// INFINITE SCROLL
-window.addEventListener("scroll", () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-    loadProducts();
-  }
-});
+// LOAD MORE BUTTON CLICK
+loadMoreBtn.addEventListener("click", loadProducts);
 
 // ADD TO CART
 function addToCart(id) {
@@ -73,7 +68,7 @@ function startSlider() {
   }, 4000);
 }
 
-// INIT
+// INITIAL LOAD
 loadProducts();
 updateCartCount();
 startSlider();
