@@ -14,19 +14,44 @@
 }
 
 /* --- BASE STYLES --- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* --- CRITICAL SCROLL FIX --- */
+html {
+    overflow-y: auto; /* Force vertical scrollbar visibility */
+    height: auto;
+}
 
 body { 
     font-family: 'Inter', sans-serif; 
-    background: var(--bg); 
-    color: var(--text); 
+    background: #ffffff; 
+    color: #000000; 
     text-transform: uppercase; 
     line-height: 1.4; 
-    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Ensure body covers full screen */
+    display: block;    /* Prevent flexbox from collapsing the page */
 }
 
-a { text-decoration: none; color: inherit; }
-button { font-family: 'Inter', sans-serif; text-transform: uppercase; }
+/* --- HERO SECTION FIX --- */
+.hero { 
+    height: 100vh; /* Keeps the big impact look */
+    width: 100%; 
+    position: relative; 
+    background: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2000') center/cover no-repeat;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    margin-bottom: 50px; /* Gives space for the next section to breathe */
+}
+
+/* Ensure the shop section isn't hidden */
+.shop-section {
+    position: relative;
+    z-index: 10;
+    padding: 80px 2.5vw;
+    background: #fff;
+    display: block; /* Ensures it renders below the hero */
+}
 
 /* --- NAVIGATION --- */
 .site-header { 
