@@ -262,3 +262,59 @@ button:hover {
 .instagram-float:hover {
   transform: scale(1.1);
 }
+/* WHATSAPP FLOAT */
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  width: 65px;
+  height: 65px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  z-index: 9999;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+}
+
+.whatsapp-float img {
+  width: 30px;
+  filter: invert(1);
+}
+
+/* INSTAGRAM FLOAT */
+.instagram-float {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 65px;
+  height: 65px;
+  background: radial-gradient(circle at 30% 107%, 
+    #fdf497 0%, #fdf497 5%, 
+    #fd5949 45%, #d6249f 60%, 
+    #285AEB 90%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  z-index: 9999;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.instagram-float:hover {
+  transform: scale(1.1);
+}
+
+.instagram-float img {
+  width: 30px;
+  filter: invert(1);
+}
