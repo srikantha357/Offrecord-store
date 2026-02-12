@@ -114,9 +114,9 @@ body {
 
 .product-card img {
   width: 100%;
-  height: 320px;
+  height: 260px;
   object-fit: cover;
-  cursor: pointer;
+  background: #f3f3f3;
 }
 
 .product-info {
