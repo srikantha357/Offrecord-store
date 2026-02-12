@@ -16,7 +16,7 @@ function loadProducts() {
 
     container.innerHTML += `
       <div class="product-card">
-        <img src="${p.image}" loading="lazy" onclick="addToCart(${p.id})">
+        <img src="${p.image}" loading="lazy" onclick="addToCart(${p.id})" style="opacity:0;" onload="this.style.opacity=1">
         <div class="product-info">
           <h4>${p.name}</h4>
           <p class="old-price">₹${p.oldPrice}</p>
