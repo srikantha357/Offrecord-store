@@ -2,7 +2,7 @@ const container = document.getElementById("product-container");
 const loadMoreBtn = document.getElementById("load-more-btn");
 
 let currentIndex = 0;
-const itemsPerLoad = 8;
+const itemsPerLoad = 4;
 
 // LOAD PRODUCTS
 function loadProducts() {
