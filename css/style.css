@@ -188,3 +188,22 @@ button:hover {
   .navbar {
     flex-direction: column;
     gap: 10
+.load-more-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+#load-more-btn {
+  padding: 12px 30px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+#load-more-btn:hover {
+  background: #333;
+}
