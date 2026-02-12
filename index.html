@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OFF Record Store</title>
+
 <link rel="stylesheet" href="css/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
@@ -23,10 +25,17 @@
   </div>
 </header>
 
+<!-- HERO SLIDER -->
 <section class="hero">
+  <div class="slider">
+    <div class="slide active" style="background-image: url('assets/slide1.png');"></div>
+    <div class="slide" style="background-image: url('assets/slide2.png');"></div>
+    <div class="slide" style="background-image: url('assets/slide3.png');"></div>
+  </div>
   <h1>MEN'S NEW ARRIVALS</h1>
 </section>
 
+<!-- PRODUCTS -->
 <section class="products">
   <div id="product-container" class="product-grid"></div>
   <div id="loader" class="loader">Loading...</div>
@@ -34,5 +43,18 @@
 
 <script src="js/products.js"></script>
 <script src="js/app.js"></script>
+
+<script>
+/* HERO SLIDER */
+let slides = document.querySelectorAll(".slide");
+let currentSlide = 0;
+
+setInterval(() => {
+  slides[currentSlide].classList.remove("active");
+  currentSlide = (currentSlide + 1) % slides.length;
+  slides[currentSlide].classList.add("active");
+}, 4000);
+</script>
+
 </body>
 </html>
