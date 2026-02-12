@@ -1,49 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>OFFRECORD | STREETWEAR</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrbanDrip</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <header class="site-header">
-        <div class="header-inner">
-            <div class="logo">OFFRECORD</div>
-            <nav class="main-nav">
-                <a href="index.html">HOME</a>
-                <a href="index.html#shop">SHOP</a>
-                <a href="contact.html">CONTACT</a>
-            </nav>
-            <div class="nav-icons">
-                <a href="account.html">USER</a>
-                <div class="cart-icon" onclick="location.href='cart.html'">
-                    BAG <span class="badge">0</span>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <section class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>MEN'S NEW<br>ARRIVALS</h1>
-        </div>
-    </section>
+<header class="navbar">
+  <div class="logo">UrbanDrip</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#">Shop</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="nav-icons">
+    <a href="account.html">My Account</a>
+    <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+  </div>
+</header>
 
-    <body>
-    <header class="site-header">...</header>
+<section class="hero">
+  <h1>MEN'S NEW ARRIVALS</h1>
+</section>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>MEN'S NEW<br>ARRIVALS</h1>
-        </div>
-    </section>
+<section class="products">
+  <div id="product-container" class="product-grid"></div>
+  <div id="loader" class="loader">Loading...</div>
+</section>
 
-    <section class="shop-section" id="shop">
-        <div class="product-grid" id="productGrid">
-            </div>
-        <div id="loading">COLLECTING DROPS...</div>
-    </section>
-
-    <script src="script.js"></script>
+<script src="js/products.js"></script>
+<script src="js/app.js"></script>
 </body>
+</html>
