@@ -2,19 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Your Cart - OFF Record Store</title>
+<title>Your Cart - OFF RECORD STORE</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-
-/* ===== GENERAL ===== */
 body{
   margin:0;
   font-family:Arial, sans-serif;
   background:linear-gradient(to right,#f6f8fb,#eef2f7);
 }
 
+/* NAVBAR */
 .navbar{
   display:flex;
   justify-content:space-between;
@@ -32,21 +31,22 @@ body{
 
 .navbar a{
   text-decoration:none;
-  margin:0 12px;
+  margin-left:20px;
   color:#333;
   font-weight:500;
 }
 
+/* TITLE */
 .cart-title{
   text-align:center;
-  margin-top:40px;
+  margin:40px 0;
   font-size:36px;
 }
 
-/* ===== LAYOUT ===== */
+/* LAYOUT */
 .cart-wrapper{
   width:90%;
-  margin:40px auto;
+  margin:auto;
   display:flex;
   gap:40px;
 }
@@ -121,6 +121,7 @@ select{
   cursor:pointer;
 }
 
+/* PRODUCT DESC */
 .product-desc{
   margin-top:15px;
   font-size:14px;
@@ -130,10 +131,94 @@ select{
   padding-top:12px;
 }
 
+/* RECOMMENDED */
+.recommended{
+  width:90%;
+  margin:80px auto;
+}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:25px;
+}
+
+.product-card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  transition:0.3s;
+  position:relative;
+}
+
+.product-card:hover{
+  transform:translateY(-5px);
+}
+
+.product-card img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.discount-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:red;
+  color:white;
+  padding:4px 8px;
+  font-size:12px;
+  border-radius:4px;
+}
+
+.load-more{
+  text-align:center;
+  margin-top:30px;
+}
+
+.load-more button{
+  padding:10px 25px;
+  background:black;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.quick-btn{
+  width:100%;
+  margin-top:8px;
+  padding:8px;
+  background:#111;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+  width:400px;
+}
+
 @media(max-width:900px){
   .cart-wrapper{flex-direction:column;}
 }
-
 </style>
 </head>
 
@@ -152,7 +237,6 @@ select{
 <h1 class="cart-title"><i class="fas fa-shopping-cart"></i> Your Cart</h1>
 
 <div class="cart-wrapper">
-
   <div class="cart-left" id="cart-items"></div>
 
   <div class="cart-summary">
@@ -160,19 +244,32 @@ select{
     <p>Subtotal: ₹<span id="subtotal">0</span></p>
     <p>Total: ₹<span id="total">0</span></p>
 
-    <button class="checkout-btn" onclick="checkout()">
-      Pay ₹10 (Test)
-    </button>
+    <button class="checkout-btn" onclick="checkout()">Pay ₹10 (Test)</button>
 
     <div class="product-desc">
-      <strong>Product Details:</strong><br>
-      Premium 240 GSM cotton fabric. High-quality anime print with long-lasting colors. 
-      Soft feel, breathable material. Perfect for daily wear & street style.
-      Made in India.
+      Premium 240 GSM cotton fabric. High-quality anime print.
+      Soft feel, breathable material. Perfect streetwear fit.
     </div>
-
   </div>
+</div>
 
+<!-- RECOMMENDED -->
+<div class="recommended">
+  <h2>Recommended For You</h2>
+  <div id="recommended-grid" class="product-grid"></div>
+  <div class="load-more">
+    <button id="loadMoreBtn">Load More</button>
+  </div>
+</div>
+
+<!-- QUICK VIEW MODAL -->
+<div class="modal" id="quickModal">
+  <div class="modal-content">
+    <h3 id="modalTitle"></h3>
+    <img id="modalImg" width="100%">
+    <p>Premium oversized anime streetwear tee.</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
 </div>
 
 <script src="js/products.js"></script>
@@ -180,71 +277,43 @@ select{
 <script>
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let subtotal = 0;
+let subtotal=0;
+let recIndex=0;
+const perLoad=4;
 
 function updateCartCount(){
-  document.getElementById("cart-count").innerText = cart.length;
+  document.getElementById("cart-count").innerText=cart.length;
 }
 
 function renderCart(){
-  const container = document.getElementById("cart-items");
+  const container=document.getElementById("cart-items");
   container.innerHTML="";
   subtotal=0;
 
-  if(cart.length === 0){
-    container.innerHTML = "<p>Your cart is empty.</p>";
-    document.getElementById("subtotal").innerText = 0;
-    document.getElementById("total").innerText = 0;
-    return;
-  }
-
-  cart.forEach((item,index)=>{
-    if(!item.qty) item.qty=1;
-
-    subtotal += item.price * item.qty;
+  cart.forEach((item,i)=>{
+    if(!item.qty)item.qty=1;
+    subtotal+=item.price*item.qty;
 
     container.innerHTML+=`
-      <div class="cart-item">
-        <img src="${item.image}">
-        <div>
-          <h3>${item.name}</h3>
-          <p>₹${item.price}</p>
-
-          <div class="options-row">
-            <select onchange="updateOption(${index}, 'size', this.value)">
-              <option>S</option>
-              <option>M</option>
-              <option>L</option>
-              <option>XL</option>
-              <option>XXL</option>
-            </select>
-
-            <select onchange="updateOption(${index}, 'print', this.value)">
-              <option>Print Front</option>
-              <option>Print Back</option>
-            </select>
-
-            <select onchange="updateOption(${index}, 'color', this.value)">
-              <option>Black</option>
-              <option>White</option>
-            </select>
-
-            <select onchange="updateOption(${index}, 'type', this.value)">
-              <option>Regular</option>
-              <option>Oversized</option>
-            </select>
-          </div>
-
-          <br>
-          <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
-          ${item.qty}
-          <button class="qty-btn" onclick="changeQty(${index},1)">+</button>
-
-          <br>
-          <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+    <div class="cart-item">
+      <img src="${item.image}">
+      <div>
+        <h3>${item.name}</h3>
+        ₹${item.price}
+        <div class="options-row">
+          <select><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+          <select><option>Print Front</option><option>Print Back</option></select>
+          <select><option>Black</option><option>White</option></select>
+          <select><option>Regular</option><option>Oversized</option></select>
         </div>
+        <br>
+        <button class="qty-btn" onclick="changeQty(${i},-1)">-</button>
+        ${item.qty}
+        <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        <br>
+        <button class="remove-btn" onclick="removeItem(${i})">Remove</button>
       </div>
-    `;
+    </div>`;
   });
 
   document.getElementById("subtotal").innerText=subtotal;
@@ -253,28 +322,64 @@ function renderCart(){
 }
 
 function changeQty(i,a){
-  cart[i].qty += a;
-  if(cart[i].qty < 1) cart[i].qty = 1;
-  localStorage.setItem("cart", JSON.stringify(cart));
+  cart[i].qty+=a;
+  if(cart[i].qty<1)cart[i].qty=1;
+  localStorage.setItem("cart",JSON.stringify(cart));
   renderCart();
 }
 
 function removeItem(i){
   cart.splice(i,1);
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem("cart",JSON.stringify(cart));
   renderCart();
 }
 
-function updateOption(index,key,value){
-  cart[index][key] = value;
-  localStorage.setItem("cart", JSON.stringify(cart));
+/* RECOMMENDED */
+
+function loadMore(){
+  const grid=document.getElementById("recommended-grid");
+
+  let filtered=products.filter(p=>!cart.some(c=>c.id===p.id));
+
+  for(let i=recIndex;i<recIndex+perLoad;i++){
+    if(i>=filtered.length){
+      document.getElementById("loadMoreBtn").style.display="none";
+      break;
+    }
+
+    const p=filtered[i];
+
+    grid.innerHTML+=`
+    <div class="product-card">
+      <div class="discount-badge">20% OFF</div>
+      <img src="${p.image}">
+      <h4>${p.name}</h4>
+      <p><del>₹${p.oldPrice}</del> ₹${p.price}</p>
+      <button class="quick-btn" onclick="quickView('${p.name}','${p.image}')">Quick View</button>
+    </div>`;
+  }
+
+  recIndex+=perLoad;
+}
+
+function quickView(name,img){
+  document.getElementById("modalTitle").innerText=name;
+  document.getElementById("modalImg").src=img;
+  document.getElementById("quickModal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("quickModal").style.display="none";
 }
 
 function checkout(){
-  alert("Backend Razorpay order call will trigger here.");
+  alert("Razorpay test will trigger here.");
 }
 
+document.getElementById("loadMoreBtn").addEventListener("click",loadMore);
+
 renderCart();
+loadMore();
 
 </script>
 
