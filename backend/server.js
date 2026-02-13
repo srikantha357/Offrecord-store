@@ -3,90 +3,46 @@ const Razorpay = require("razorpay");
 const cors = require("cors");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const mongoose = require("mongoose");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const validator = require("validator");
 require("dotenv").config();
 
 const app = express();
 
-/* ============================
-   MIDDLEWARE
-============================ */
-app.use(cors({
-  origin: "*", // Later change to your domain
-}));
+/* ================= SECURITY ================= */
+app.use(helmet());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-/* ============================
-   RAZORPAY INSTANCE
-============================ */
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50
+});
+app.use(limiter);
+
+/* ================= DATABASE ================= */
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => console.log("DB Error:", err));
+
+const enquirySchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  message: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Enquiry = mongoose.model("Enquiry", enquirySchema);
+
+/* ================= RAZORPAY ================= */
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-/* ============================
-   ROOT ROUTE (Health Check)
-============================ */
-app.get("/", (req, res) => {
-  res.send("Backend is running successfully 🚀");
-});
-
-/* ============================
-   CREATE ORDER
-============================ */
-app.post("/create-order", async (req, res) => {
-  try {
-    const { amount } = req.body;
-
-    if (!amount) {
-      return res.status(400).json({ error: "Amount is required" });
-    }
-
-    const options = {
-      amount: amount * 100, // ₹ to paise
-      currency: "INR",
-      receipt: "receipt_" + Date.now()
-    };
-
-    const order = await razorpay.orders.create(options);
-    res.json(order);
-
-  } catch (error) {
-    console.error("Create Order Error:", error);
-    res.status(500).json({ error: "Failed to create order" });
-  }
-});
-
-/* ============================
-   VERIFY PAYMENT
-============================ */
-app.post("/verify-payment", (req, res) => {
-  try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature
-    } = req.body;
-
-    const generated_signature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
-      .digest("hex");
-
-    if (generated_signature === razorpay_signature) {
-      res.json({ success: true, message: "Payment verified successfully ✅" });
-    } else {
-      res.status(400).json({ success: false, message: "Invalid signature ❌" });
-    }
-
-  } catch (error) {
-    console.error("Verification Error:", error);
-    res.status(500).json({ error: "Verification failed" });
-  }
-});
-
-/* ============================
-   CONTACT FORM EMAIL ROUTE
-============================ */
+/* ================= MAIL ================= */
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -95,42 +51,115 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-app.post("/send-enquiry", async (req, res) => {
-  try {
-    const { name, email, message } = req.body;
+/* ================= ROOT ================= */
+app.get("/", (req, res) => {
+  res.send("🚀 Backend Running Successfully");
+});
 
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: "All fields are required" });
+/* ================= CREATE ORDER ================= */
+app.post("/create-order", async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
+      currency: "INR",
+      receipt: "receipt_" + Date.now()
+    });
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: "Order creation failed" });
+  }
+});
+
+/* ================= VERIFY PAYMENT + SEND INVOICE ================= */
+app.post("/verify-payment", async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      email,
+      amount
+    } = req.body;
+
+    const generated_signature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (generated_signature !== razorpay_signature) {
+      return res.status(400).json({ success: false });
     }
 
-    const mailOptions = {
+    // Send Invoice Email
+    await transporter.sendMail({
       from: `"OFF RECORD STORE" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,
-      subject: "New Enquiry - OFF RECORD STORE",
+      to: email,
+      subject: "Payment Successful - Invoice",
       html: `
-        <h2>New Customer Enquiry</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
+        <h2>Thank you for your purchase 🎉</h2>
+        <p>Payment ID: ${razorpay_payment_id}</p>
+        <p>Amount Paid: ₹${amount}</p>
+        <p>Your order is being processed.</p>
       `
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     res.json({ success: true });
 
   } catch (error) {
-    console.error("Email Error:", error);
+    res.status(500).json({ error: "Verification failed" });
+  }
+});
+
+/* ================= CONTACT FORM ================= */
+app.post("/send-enquiry", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ error: "Invalid Email" });
+    }
+
+    // Save to DB
+    await Enquiry.create({ name, email, message });
+
+    // Send to You
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: "New Enquiry - OFF RECORD STORE",
+      html: `
+        <h3>New Enquiry</h3>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Message:</b> ${message}</p>
+      `
+    });
+
+    // Auto Reply
+    await transporter.sendMail({
+      from: `"OFF RECORD STORE" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "We received your enquiry",
+      html: `
+        <h3>Hi ${name},</h3>
+        <p>Thank you for contacting OFF RECORD STORE.</p>
+        <p>We will respond within 24 hours.</p>
+      `
+    });
+
+    res.json({ success: true });
+
+  } catch (error) {
     res.status(500).json({ error: "Failed to send enquiry" });
   }
 });
 
-/* ============================
-   START SERVER
-============================ */
+/* ================= START SERVER ================= */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log("🚀 Server running on port", PORT);
 });
