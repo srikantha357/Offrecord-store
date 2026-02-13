@@ -5,160 +5,150 @@
 <title>Your Cart - OFF Record Store</title>
 
 <link rel="stylesheet" href="css/style.css">
-
-<!-- FONT AWESOME -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- RAZORPAY -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
 
+/* ===== GENERAL ===== */
 body{
-  background:#f5f6f8;
   margin:0;
-  font-family: Arial, sans-serif;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(to right,#f6f8fb,#eef2f7);
 }
 
-/* NAVBAR */
 .navbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:20px 60px;
-  background:white;
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  padding:20px 8%;
+  background:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
 .logo{
   font-weight:800;
   letter-spacing:4px;
+  font-size:22px;
 }
 
 .navbar a{
   text-decoration:none;
-  color:black;
   margin:0 10px;
+  color:#333;
+  font-weight:500;
 }
 
-/* TITLE */
 .cart-title{
   text-align:center;
-  margin-top:30px;
-  font-size:32px;
+  margin-top:40px;
+  font-size:36px;
 }
 
-/* LAYOUT */
+/* ===== CART LAYOUT ===== */
 .cart-wrapper{
   width:90%;
   margin:40px auto;
   display:flex;
   gap:40px;
-  align-items:flex-start;
 }
 
-.cart-left{
-  flex:2;
-}
-
+.cart-left{ flex:2; }
 .cart-summary{
   flex:1;
-  background:white;
+  background:#fff;
   padding:25px;
   border-radius:12px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
   position:sticky;
-  top:100px;
+  top:120px;
 }
 
-/* CART ITEM */
 .cart-item{
   display:flex;
   gap:20px;
-  background:white;
+  background:#fff;
   padding:20px;
   border-radius:12px;
   margin-bottom:20px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  box-shadow:0 6px 15px rgba(0,0,0,0.05);
 }
 
 .cart-item img{
-  width:150px;
-  height:180px;
+  width:160px;
+  height:200px;
   object-fit:cover;
-  border-radius:8px;
-}
-
-.cart-item h3{
-  margin:0 0 10px;
-}
-
-.qty-control{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-top:10px;
+  border-radius:10px;
 }
 
 .qty-btn{
-  width:28px;
-  height:28px;
-  border:none;
+  width:30px;
+  height:30px;
   background:black;
   color:white;
+  border:none;
   cursor:pointer;
 }
 
 .remove-btn{
+  color:red;
   background:none;
   border:none;
-  color:red;
   cursor:pointer;
-  margin-top:8px;
+  margin-top:10px;
 }
 
-.summary-line{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
+/* ===== RECOMMENDED ===== */
+.recommended{
+  width:90%;
+  margin:70px auto;
 }
 
-.checkout-btn{
-  width:100%;
-  padding:12px;
-  background:black;
-  color:white;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  margin-top:15px;
-}
-
-/* RECOMMENDED FIX */
 .product-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:25px;
 }
 
 .product-card{
-  background:white;
+  background:#fff;
+  border-radius:12px;
   padding:15px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.05);
   text-align:center;
+  position:relative;
+  transition:0.3s;
+  box-shadow:0 6px 18px rgba(0,0,0,0.05);
+}
+
+.product-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.1);
 }
 
 .product-card img{
   width:100%;
-  height:220px;
+  height:260px;
   object-fit:cover;
-  border-radius:8px;
+  border-radius:10px;
 }
 
-.product-card button{
-  margin-top:10px;
-  padding:8px 15px;
+.discount-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:red;
+  color:#fff;
+  padding:5px 8px;
+  font-size:12px;
+  border-radius:4px;
+}
+
+.load-more{
+  text-align:center;
+  margin-top:30px;
+}
+
+.load-more button{
+  padding:12px 30px;
   background:black;
   color:white;
   border:none;
@@ -166,15 +156,45 @@ body{
   cursor:pointer;
 }
 
+/* ===== QUICK VIEW MODAL ===== */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:white;
+  width:500px;
+  padding:25px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.modal-content img{
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.close-modal{
+  cursor:pointer;
+  position:absolute;
+  right:20px;
+  top:20px;
+  font-size:20px;
+}
+
 @media(max-width:900px){
-  .cart-wrapper{
-    flex-direction:column;
-  }
+  .cart-wrapper{flex-direction:column;}
 }
 
 </style>
 </head>
-
 <body>
 
 <header class="navbar">
@@ -183,44 +203,41 @@ body{
     <a href="index.html">Home</a>
     <a href="index.html#shop">Shop</a>
     <a href="contact.html">Contact</a>
-  </div>
-  <div>
     <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
   </div>
 </header>
 
-<h1 class="cart-title">
-  <i class="fas fa-shopping-cart"></i> Your Cart
-</h1>
+<h1 class="cart-title"><i class="fas fa-shopping-cart"></i> Your Cart</h1>
 
 <div class="cart-wrapper">
-
   <div class="cart-left" id="cart-items"></div>
 
   <div class="cart-summary">
     <h3>Order Summary</h3>
-    <div class="summary-line">
-      <span>Subtotal</span>
-      <span id="subtotal">₹0</span>
-    </div>
-    <div class="summary-line">
-      <span>Shipping</span>
-      <span>Free</span>
-    </div>
-    <hr>
-    <div class="summary-line" style="font-weight:bold;">
-      <span>Total</span>
-      <span id="total">₹0</span>
-    </div>
-
-    <button class="checkout-btn" onclick="checkout()">Pay ₹10 (Test)</button>
+    <p>Subtotal: ₹<span id="subtotal">0</span></p>
+    <p>Total: ₹<span id="total">0</span></p>
+    <button onclick="checkout()" style="width:100%;padding:12px;background:black;color:white;border:none;border-radius:6px;">
+      Pay ₹10 (Test)
+    </button>
   </div>
-
 </div>
 
-<div style="width:90%; margin:50px auto;">
+<div class="recommended">
   <h2>Recommended For You</h2>
   <div id="recommended-container" class="product-grid"></div>
+  <div class="load-more">
+    <button id="load-more-btn">Load More</button>
+  </div>
+</div>
+
+<!-- QUICK VIEW MODAL -->
+<div class="modal" id="quickViewModal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeModal()">×</span>
+    <img id="modal-img">
+    <h3 id="modal-title"></h3>
+    <p id="modal-price"></p>
+  </div>
 </div>
 
 <script src="js/products.js"></script>
@@ -228,97 +245,116 @@ body{
 <script>
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let container = document.getElementById("cart-items");
+let subtotal = 0;
 
 function updateCartCount(){
   document.getElementById("cart-count").innerText = cart.length;
 }
 
 function renderCart(){
-  container.innerHTML = "";
-  let subtotal = 0;
-
-  if(cart.length === 0){
-    container.innerHTML = "<p>Your cart is empty.</p>";
-    updateCartCount();
-    return;
-  }
+  const container = document.getElementById("cart-items");
+  container.innerHTML="";
+  subtotal=0;
 
   cart.forEach((item,index)=>{
     if(!item.qty) item.qty=1;
-    subtotal += item.price * item.qty;
+    subtotal+=item.price*item.qty;
 
-    container.innerHTML += `
+    container.innerHTML+=`
       <div class="cart-item">
         <img src="${item.image}">
         <div>
           <h3>${item.name}</h3>
           <p>₹${item.price}</p>
-
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
-            <span>${item.qty}</span>
-            <button class="qty-btn" onclick="changeQty(${index},1)">+</button>
-          </div>
-
+          <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
+          ${item.qty}
+          <button class="qty-btn" onclick="changeQty(${index},1)">+</button>
+          <br>
           <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
         </div>
       </div>
     `;
   });
 
-  document.getElementById("subtotal").innerText = "₹"+subtotal;
-  document.getElementById("total").innerText = "₹"+subtotal;
+  document.getElementById("subtotal").innerText=subtotal;
+  document.getElementById("total").innerText=subtotal;
   updateCartCount();
 }
 
-function changeQty(index,amount){
-  cart[index].qty += amount;
-  if(cart[index].qty < 1) cart[index].qty = 1;
+function changeQty(i,a){
+  cart[i].qty+=a;
+  if(cart[i].qty<1) cart[i].qty=1;
   localStorage.setItem("cart",JSON.stringify(cart));
   renderCart();
 }
 
-function removeItem(index){
-  cart.splice(index,1);
+function removeItem(i){
+  cart.splice(i,1);
   localStorage.setItem("cart",JSON.stringify(cart));
   renderCart();
 }
 
-/* 🔥 RAZORPAY ₹10 TEST */
+/* ===== RECOMMENDED WITH EXCLUDE + LOAD MORE ===== */
+
+let recIndex=0;
+const perLoad=4;
+
+function loadRecommended(){
+  const container=document.getElementById("recommended-container");
+
+  const cartIds=cart.map(c=>c.id);
+
+  let shown=0;
+
+  for(let i=recIndex;i<products.length;i++){
+
+    if(cartIds.includes(products[i].id)) continue;
+
+    container.innerHTML+=`
+      <div class="product-card">
+        <div class="discount-badge">20% OFF</div>
+        <img src="${products[i].image}" onclick="quickView(${i})">
+        <h4>${products[i].name}</h4>
+        <p><del>₹${products[i].oldPrice}</del> ₹${products[i].price}</p>
+        <button onclick="addToCart(${products[i].id})">Add to Cart</button>
+      </div>
+    `;
+
+    shown++;
+    recIndex=i+1;
+    if(shown>=perLoad) break;
+  }
+
+  if(recIndex>=products.length){
+    document.getElementById("load-more-btn").style.display="none";
+  }
+}
+
+document.getElementById("load-more-btn").addEventListener("click",loadRecommended);
+
+function addToCart(id){
+  cart.push(products.find(p=>p.id===id));
+  localStorage.setItem("cart",JSON.stringify(cart));
+  renderCart();
+}
+
+function quickView(i){
+  document.getElementById("modal-img").src=products[i].image;
+  document.getElementById("modal-title").innerText=products[i].name;
+  document.getElementById("modal-price").innerText="₹"+products[i].price;
+  document.getElementById("quickViewModal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("quickViewModal").style.display="none";
+}
+
 function checkout(){
-
-  var options = {
-    "key": "rzp_live_SFYyFjaypBbEo0", 
-    "amount": 1000,   // ₹10 = 1000 paise
-    "currency": "INR",
-    "name": "OFF RECORD STORE",
-    "description": "Test Payment",
-    "handler": function (response){
-        alert("Payment Successful! ID: " + response.razorpay_payment_id);
-        localStorage.removeItem("cart");
-        location.reload();
-    },
-    "theme": { "color": "#000" }
-  };
-
-  var rzp = new Razorpay(options);
-  rzp.open();
+  alert("Backend Razorpay order call will trigger here.");
 }
 
 renderCart();
-
-/* Recommended */
-const recommendedContainer = document.getElementById("recommended-container");
-products.slice(0,4).forEach(p=>{
-  recommendedContainer.innerHTML += `
-    <div class="product-card">
-      <img src="${p.image}">
-      <h4>${p.name}</h4>
-      <p>₹${p.price}</p>
-    </div>
-  `;
-});
+loadRecommended();
 
 </script>
 
