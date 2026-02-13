@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Your Cart - OFF Record Store</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
@@ -15,15 +19,31 @@ body {
 /* TITLE */
 .cart-title {
   text-align: center;
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 700;
-  margin: 50px 0 40px;
+  margin-top: 40px;
+}
+
+.cart-title i {
+  margin-right: 10px;
+}
+
+/* CONTINUE SHOPPING */
+.continue-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 18px;
+  background: black;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
 }
 
 /* LAYOUT */
 .cart-wrapper {
   width: 90%;
-  margin: auto;
+  margin: 40px auto;
   display: flex;
   gap: 40px;
   align-items: flex-start;
@@ -45,11 +65,6 @@ body {
   top: 120px;
 }
 
-.cart-summary h3 {
-  margin-bottom: 20px;
-  font-size: 22px;
-}
-
 .summary-line {
   display: flex;
   justify-content: space-between;
@@ -67,11 +82,6 @@ body {
   margin-top: 20px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.checkout-btn:hover {
-  background: #333;
 }
 
 /* CART ITEM */
@@ -92,14 +102,9 @@ body {
   border-radius: 10px;
 }
 
-.cart-details h2 {
-  margin-bottom: 10px;
-  font-size: 22px;
-}
-
 .option-row {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   margin-top: 10px;
   flex-wrap: wrap;
 }
@@ -110,26 +115,24 @@ select {
   border: 1px solid #ccc;
 }
 
-/* QTY */
 .qty-control {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 15px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .qty-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: none;
   background: black;
   color: white;
   cursor: pointer;
-  font-weight: bold;
 }
 
 .remove-btn {
-  margin-top: 15px;
+  margin-top: 10px;
   background: none;
   color: red;
   border: none;
@@ -137,44 +140,45 @@ select {
   font-weight: 600;
 }
 
-/* RECOMMENDED */
-.recommended {
-  margin: 70px auto;
-  width: 90%;
+/* EMPTY */
+.empty-cart {
+  text-align: center;
+  font-size: 18px;
+  margin: 40px 0;
 }
 
-.recommended h2 {
-  margin-bottom: 25px;
-  font-size: 28px;
+/* RECOMMENDED */
+.recommended {
+  width: 90%;
+  margin: 60px auto;
 }
 
 .load-more-container {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 #recommended-load-btn {
-  padding: 12px 35px;
+  padding: 10px 30px;
   background: black;
   color: white;
   border: none;
-  cursor: pointer;
   border-radius: 6px;
+  cursor: pointer;
 }
 
-/* RESPONSIVE */
 @media(max-width: 900px){
   .cart-wrapper {
-    flex-direction: column;
-  }
-
-  .cart-item {
     flex-direction: column;
   }
 
   .cart-summary {
     position: relative;
     top: 0;
+  }
+
+  .cart-item {
+    flex-direction: column;
   }
 }
 
@@ -183,7 +187,29 @@ select {
 
 <body>
 
-<h1 class="cart-title">Your Cart</h1>
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="logo">OFF RECORD STORE</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#shop">Shop</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="nav-icons">
+    <a href="account.html">My Account</a>
+    <a href="cart.html">
+      Cart (<span id="cart-count">0</span>)
+    </a>
+  </div>
+</header>
+
+<!-- TITLE -->
+<div style="text-align:center;">
+  <h1 class="cart-title">
+    <i class="fas fa-shopping-cart"></i> Your Cart
+  </h1>
+  <a href="index.html" class="continue-btn">← Continue Shopping</a>
+</div>
 
 <div class="cart-wrapper">
 
@@ -214,7 +240,6 @@ select {
 <div class="recommended">
   <h2>Recommended For You</h2>
   <div id="recommended-container" class="product-grid"></div>
-
   <div class="load-more-container">
     <button id="recommended-load-btn">Load More</button>
   </div>
@@ -228,10 +253,25 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let container = document.getElementById("cart-items");
 let subtotal = 0;
 
+/* UPDATE NAV COUNT */
+function updateCartCount(){
+  const count = document.getElementById("cart-count");
+  if(count) count.innerText = cart.length;
+}
+
 /* RENDER CART */
 function renderCart(){
+
   container.innerHTML = "";
   subtotal = 0;
+
+  if(cart.length === 0){
+    container.innerHTML = "<div class='empty-cart'>Your cart is empty 🛒</div>";
+    document.getElementById("subtotal").innerText = "₹0";
+    document.getElementById("total").innerText = "₹0";
+    updateCartCount();
+    return;
+  }
 
   cart.forEach((item, index) => {
 
@@ -240,11 +280,9 @@ function renderCart(){
 
     container.innerHTML += `
       <div class="cart-item">
-
         <img src="${item.image}" loading="lazy">
-
-        <div class="cart-details">
-          <h2>${item.name}</h2>
+        <div>
+          <h3>${item.name}</h3>
           <p>₹${item.price}</p>
 
           <div class="option-row">
@@ -281,13 +319,13 @@ function renderCart(){
 
           <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
         </div>
-
       </div>
     `;
   });
 
   document.getElementById("subtotal").innerText = "₹" + subtotal;
   document.getElementById("total").innerText = "₹" + subtotal;
+  updateCartCount();
 }
 
 function changeQty(index, amount){
@@ -304,7 +342,7 @@ function removeItem(index){
 }
 
 function checkout(){
-  alert("Next step: Razorpay integration");
+  alert("Next step: Razorpay integration 🔥");
 }
 
 renderCart();
@@ -317,10 +355,9 @@ const recommendedBtn = document.getElementById("recommended-load-btn");
 let recIndex = 0;
 const recPerLoad = 4;
 
-function loadRecommended() {
-  for (let i = recIndex; i < recIndex + recPerLoad; i++) {
-
-    if (i >= products.length) {
+function loadRecommended(){
+  for (let i = recIndex; i < recIndex + recPerLoad; i++){
+    if(i >= products.length){
       recommendedBtn.style.display = "none";
       break;
     }
@@ -341,10 +378,6 @@ function loadRecommended() {
   }
 
   recIndex += recPerLoad;
-
-  if (recIndex >= products.length) {
-    recommendedBtn.style.display = "none";
-  }
 }
 
 function addToCartFromCart(id){
