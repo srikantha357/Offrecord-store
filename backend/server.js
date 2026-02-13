@@ -2,11 +2,16 @@ const express = require("express");
 const Razorpay = require("razorpay");
 const cors = require("cors");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const app = express();
 
+/* ============================
+   MIDDLEWARE
+============================ */
 app.use(cors({
-  origin: "*", // Later change to your domain for security
+  origin: "*", // Later change to your domain
 }));
 app.use(express.json());
 
@@ -19,14 +24,14 @@ const razorpay = new Razorpay({
 });
 
 /* ============================
-   ROOT ROUTE (Render Health)
+   ROOT ROUTE (Health Check)
 ============================ */
 app.get("/", (req, res) => {
-  res.send("Backend is running ✅");
+  res.send("Backend is running successfully 🚀");
 });
 
 /* ============================
-   CREATE ORDER ROUTE
+   CREATE ORDER
 ============================ */
 app.post("/create-order", async (req, res) => {
   try {
@@ -37,13 +42,12 @@ app.post("/create-order", async (req, res) => {
     }
 
     const options = {
-      amount: amount * 100, // convert ₹ to paise
+      amount: amount * 100, // ₹ to paise
       currency: "INR",
       receipt: "receipt_" + Date.now()
     };
 
     const order = await razorpay.orders.create(options);
-
     res.json(order);
 
   } catch (error) {
@@ -53,7 +57,7 @@ app.post("/create-order", async (req, res) => {
 });
 
 /* ============================
-   VERIFY PAYMENT ROUTE
+   VERIFY PAYMENT
 ============================ */
 app.post("/verify-payment", (req, res) => {
   try {
@@ -81,32 +85,26 @@ app.post("/verify-payment", (req, res) => {
 });
 
 /* ============================
-   START SERVER
+   CONTACT FORM EMAIL ROUTE
 ============================ */
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
 });
-const nodemailer = require("nodemailer");
 
-// CONTACT FORM ROUTE
 app.post("/send-enquiry", async (req, res) => {
-
-  const { name, email, message } = req.body;
-
   try {
+    const { name, email, message } = req.body;
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"OFF RECORD STORE" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: "New Enquiry - OFF RECORD STORE",
       html: `
@@ -123,7 +121,16 @@ app.post("/send-enquiry", async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Email Error:", error);
+    res.status(500).json({ error: "Failed to send enquiry" });
   }
+});
 
+/* ============================
+   START SERVER
+============================ */
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
