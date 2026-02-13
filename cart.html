@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Your Cart - OFF Record Store</title>
 
-<link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -33,7 +32,7 @@ body{
 
 .navbar a{
   text-decoration:none;
-  margin:0 10px;
+  margin:0 12px;
   color:#333;
   font-weight:500;
 }
@@ -44,7 +43,7 @@ body{
   font-size:36px;
 }
 
-/* ===== CART LAYOUT ===== */
+/* ===== LAYOUT ===== */
 .cart-wrapper{
   width:90%;
   margin:40px auto;
@@ -53,6 +52,7 @@ body{
 }
 
 .cart-left{ flex:2; }
+
 .cart-summary{
   flex:1;
   background:#fff;
@@ -69,15 +69,28 @@ body{
   background:#fff;
   padding:20px;
   border-radius:12px;
-  margin-bottom:20px;
+  margin-bottom:25px;
   box-shadow:0 6px 15px rgba(0,0,0,0.05);
 }
 
 .cart-item img{
-  width:160px;
-  height:200px;
+  width:180px;
+  height:230px;
   object-fit:cover;
   border-radius:10px;
+}
+
+.options-row{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+select{
+  padding:6px 10px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 
 .qty-btn{
@@ -97,96 +110,24 @@ body{
   margin-top:10px;
 }
 
-/* ===== RECOMMENDED ===== */
-.recommended{
-  width:90%;
-  margin:70px auto;
-}
-
-.product-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:25px;
-}
-
-.product-card{
-  background:#fff;
-  border-radius:12px;
-  padding:15px;
-  text-align:center;
-  position:relative;
-  transition:0.3s;
-  box-shadow:0 6px 18px rgba(0,0,0,0.05);
-}
-
-.product-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 12px 25px rgba(0,0,0,0.1);
-}
-
-.product-card img{
+.checkout-btn{
   width:100%;
-  height:260px;
-  object-fit:cover;
-  border-radius:10px;
-}
-
-.discount-badge{
-  position:absolute;
-  top:10px;
-  left:10px;
-  background:red;
-  color:#fff;
-  padding:5px 8px;
-  font-size:12px;
-  border-radius:4px;
-}
-
-.load-more{
-  text-align:center;
-  margin-top:30px;
-}
-
-.load-more button{
-  padding:12px 30px;
+  padding:14px;
   background:black;
   color:white;
   border:none;
   border-radius:6px;
+  margin-top:15px;
   cursor:pointer;
 }
 
-/* ===== QUICK VIEW MODAL ===== */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
-  align-items:center;
-}
-
-.modal-content{
-  background:white;
-  width:500px;
-  padding:25px;
-  border-radius:12px;
-  text-align:center;
-}
-
-.modal-content img{
-  width:100%;
-  height:300px;
-  object-fit:cover;
-  border-radius:10px;
-}
-
-.close-modal{
-  cursor:pointer;
-  position:absolute;
-  right:20px;
-  top:20px;
-  font-size:20px;
+.product-desc{
+  margin-top:15px;
+  font-size:14px;
+  color:#555;
+  line-height:1.5;
+  border-top:1px solid #eee;
+  padding-top:12px;
 }
 
 @media(max-width:900px){
@@ -195,6 +136,7 @@ body{
 
 </style>
 </head>
+
 <body>
 
 <header class="navbar">
@@ -210,34 +152,27 @@ body{
 <h1 class="cart-title"><i class="fas fa-shopping-cart"></i> Your Cart</h1>
 
 <div class="cart-wrapper">
+
   <div class="cart-left" id="cart-items"></div>
 
   <div class="cart-summary">
     <h3>Order Summary</h3>
     <p>Subtotal: ₹<span id="subtotal">0</span></p>
     <p>Total: ₹<span id="total">0</span></p>
-    <button onclick="checkout()" style="width:100%;padding:12px;background:black;color:white;border:none;border-radius:6px;">
+
+    <button class="checkout-btn" onclick="checkout()">
       Pay ₹10 (Test)
     </button>
-  </div>
-</div>
 
-<div class="recommended">
-  <h2>Recommended For You</h2>
-  <div id="recommended-container" class="product-grid"></div>
-  <div class="load-more">
-    <button id="load-more-btn">Load More</button>
-  </div>
-</div>
+    <div class="product-desc">
+      <strong>Product Details:</strong><br>
+      Premium 240 GSM cotton fabric. High-quality anime print with long-lasting colors. 
+      Soft feel, breathable material. Perfect for daily wear & street style.
+      Made in India.
+    </div>
 
-<!-- QUICK VIEW MODAL -->
-<div class="modal" id="quickViewModal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeModal()">×</span>
-    <img id="modal-img">
-    <h3 id="modal-title"></h3>
-    <p id="modal-price"></p>
   </div>
+
 </div>
 
 <script src="js/products.js"></script>
@@ -256,9 +191,17 @@ function renderCart(){
   container.innerHTML="";
   subtotal=0;
 
+  if(cart.length === 0){
+    container.innerHTML = "<p>Your cart is empty.</p>";
+    document.getElementById("subtotal").innerText = 0;
+    document.getElementById("total").innerText = 0;
+    return;
+  }
+
   cart.forEach((item,index)=>{
     if(!item.qty) item.qty=1;
-    subtotal+=item.price*item.qty;
+
+    subtotal += item.price * item.qty;
 
     container.innerHTML+=`
       <div class="cart-item">
@@ -266,9 +209,37 @@ function renderCart(){
         <div>
           <h3>${item.name}</h3>
           <p>₹${item.price}</p>
+
+          <div class="options-row">
+            <select onchange="updateOption(${index}, 'size', this.value)">
+              <option>S</option>
+              <option>M</option>
+              <option>L</option>
+              <option>XL</option>
+              <option>XXL</option>
+            </select>
+
+            <select onchange="updateOption(${index}, 'print', this.value)">
+              <option>Print Front</option>
+              <option>Print Back</option>
+            </select>
+
+            <select onchange="updateOption(${index}, 'color', this.value)">
+              <option>Black</option>
+              <option>White</option>
+            </select>
+
+            <select onchange="updateOption(${index}, 'type', this.value)">
+              <option>Regular</option>
+              <option>Oversized</option>
+            </select>
+          </div>
+
+          <br>
           <button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
           ${item.qty}
           <button class="qty-btn" onclick="changeQty(${index},1)">+</button>
+
           <br>
           <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
         </div>
@@ -282,71 +253,21 @@ function renderCart(){
 }
 
 function changeQty(i,a){
-  cart[i].qty+=a;
-  if(cart[i].qty<1) cart[i].qty=1;
-  localStorage.setItem("cart",JSON.stringify(cart));
+  cart[i].qty += a;
+  if(cart[i].qty < 1) cart[i].qty = 1;
+  localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
 }
 
 function removeItem(i){
   cart.splice(i,1);
-  localStorage.setItem("cart",JSON.stringify(cart));
+  localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
 }
 
-/* ===== RECOMMENDED WITH EXCLUDE + LOAD MORE ===== */
-
-let recIndex=0;
-const perLoad=4;
-
-function loadRecommended(){
-  const container=document.getElementById("recommended-container");
-
-  const cartIds=cart.map(c=>c.id);
-
-  let shown=0;
-
-  for(let i=recIndex;i<products.length;i++){
-
-    if(cartIds.includes(products[i].id)) continue;
-
-    container.innerHTML+=`
-      <div class="product-card">
-        <div class="discount-badge">20% OFF</div>
-        <img src="${products[i].image}" onclick="quickView(${i})">
-        <h4>${products[i].name}</h4>
-        <p><del>₹${products[i].oldPrice}</del> ₹${products[i].price}</p>
-        <button onclick="addToCart(${products[i].id})">Add to Cart</button>
-      </div>
-    `;
-
-    shown++;
-    recIndex=i+1;
-    if(shown>=perLoad) break;
-  }
-
-  if(recIndex>=products.length){
-    document.getElementById("load-more-btn").style.display="none";
-  }
-}
-
-document.getElementById("load-more-btn").addEventListener("click",loadRecommended);
-
-function addToCart(id){
-  cart.push(products.find(p=>p.id===id));
-  localStorage.setItem("cart",JSON.stringify(cart));
-  renderCart();
-}
-
-function quickView(i){
-  document.getElementById("modal-img").src=products[i].image;
-  document.getElementById("modal-title").innerText=products[i].name;
-  document.getElementById("modal-price").innerText="₹"+products[i].price;
-  document.getElementById("quickViewModal").style.display="flex";
-}
-
-function closeModal(){
-  document.getElementById("quickViewModal").style.display="none";
+function updateOption(index,key,value){
+  cart[index][key] = value;
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 function checkout(){
@@ -354,7 +275,6 @@ function checkout(){
 }
 
 renderCart();
-loadRecommended();
 
 </script>
 
