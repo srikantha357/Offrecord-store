@@ -7,20 +7,20 @@
 
 <style>
 
-/* CART PAGE BACKGROUND */
+/* BACKGROUND */
 body {
-  background: linear-gradient(to right, #f8f9fb, #eef1f6);
+  background: linear-gradient(to right, #f6f8fb, #eef2f7);
 }
 
 /* TITLE */
 .cart-title {
   text-align: center;
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 700;
-  margin: 40px 0;
+  margin: 50px 0 40px;
 }
 
-/* MAIN LAYOUT */
+/* LAYOUT */
 .cart-wrapper {
   width: 90%;
   margin: auto;
@@ -29,24 +29,25 @@ body {
   align-items: flex-start;
 }
 
-/* LEFT SIDE */
+/* LEFT */
 .cart-left {
   flex: 2;
 }
 
-/* RIGHT SIDE SUMMARY */
+/* SUMMARY */
 .cart-summary {
   flex: 1;
   background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   position: sticky;
   top: 120px;
 }
 
 .cart-summary h3 {
   margin-bottom: 20px;
+  font-size: 22px;
 }
 
 .summary-line {
@@ -66,6 +67,11 @@ body {
   margin-top: 20px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.checkout-btn:hover {
+  background: #333;
 }
 
 /* CART ITEM */
@@ -73,21 +79,22 @@ body {
   display: flex;
   gap: 30px;
   background: white;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 25px;
+  border-radius: 14px;
   margin-bottom: 25px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
 }
 
 .cart-item img {
   width: 220px;
   height: 260px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .cart-details h2 {
   margin-bottom: 10px;
+  font-size: 22px;
 }
 
 .option-row {
@@ -103,20 +110,22 @@ select {
   border: 1px solid #ccc;
 }
 
+/* QTY */
 .qty-control {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 12px;
+  margin-top: 15px;
 }
 
 .qty-btn {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: none;
   background: black;
   color: white;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .remove-btn {
@@ -130,14 +139,30 @@ select {
 
 /* RECOMMENDED */
 .recommended {
-  margin: 60px auto;
+  margin: 70px auto;
   width: 90%;
 }
 
 .recommended h2 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 28px;
 }
 
+.load-more-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+#recommended-load-btn {
+  padding: 12px 35px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* RESPONSIVE */
 @media(max-width: 900px){
   .cart-wrapper {
     flex-direction: column;
@@ -145,6 +170,11 @@ select {
 
   .cart-item {
     flex-direction: column;
+  }
+
+  .cart-summary {
+    position: relative;
+    top: 0;
   }
 }
 
@@ -180,12 +210,13 @@ select {
 
 </div>
 
-<!-- RECOMMENDED PRODUCTS -->
+<!-- RECOMMENDED -->
 <div class="recommended">
   <h2>Recommended For You</h2>
-  <div id="recommended-products" class="product-grid"></div>
+  <div id="recommended-container" class="product-grid"></div>
+
   <div class="load-more-container">
-    <button id="load-more-btn">Load More</button>
+    <button id="recommended-load-btn">Load More</button>
   </div>
 </div>
 
@@ -197,18 +228,20 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let container = document.getElementById("cart-items");
 let subtotal = 0;
 
+/* RENDER CART */
 function renderCart(){
   container.innerHTML = "";
   subtotal = 0;
 
   cart.forEach((item, index) => {
 
-    subtotal += item.price * (item.qty || 1);
+    if(!item.qty) item.qty = 1;
+    subtotal += item.price * item.qty;
 
     container.innerHTML += `
       <div class="cart-item">
 
-        <img src="${item.image}">
+        <img src="${item.image}" loading="lazy">
 
         <div class="cart-details">
           <h2>${item.name}</h2>
@@ -242,7 +275,7 @@ function renderCart(){
 
           <div class="qty-control">
             <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-            <span>${item.qty || 1}</span>
+            <span>${item.qty}</span>
             <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
           </div>
 
@@ -258,11 +291,8 @@ function renderCart(){
 }
 
 function changeQty(index, amount){
-  if(!cart[index].qty) cart[index].qty = 1;
   cart[index].qty += amount;
-
   if(cart[index].qty < 1) cart[index].qty = 1;
-
   localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
 }
@@ -278,6 +308,53 @@ function checkout(){
 }
 
 renderCart();
+
+/* RECOMMENDED SECTION */
+
+const recommendedContainer = document.getElementById("recommended-container");
+const recommendedBtn = document.getElementById("recommended-load-btn");
+
+let recIndex = 0;
+const recPerLoad = 4;
+
+function loadRecommended() {
+  for (let i = recIndex; i < recIndex + recPerLoad; i++) {
+
+    if (i >= products.length) {
+      recommendedBtn.style.display = "none";
+      break;
+    }
+
+    const p = products[i];
+
+    recommendedContainer.innerHTML += `
+      <div class="product-card">
+        <img src="${p.image}" loading="lazy">
+        <div class="product-info">
+          <h4>${p.name}</h4>
+          <p class="old-price">₹${p.oldPrice}</p>
+          <p class="price">₹${p.price}</p>
+          <button onclick="addToCartFromCart(${p.id})">Add to Cart</button>
+        </div>
+      </div>
+    `;
+  }
+
+  recIndex += recPerLoad;
+
+  if (recIndex >= products.length) {
+    recommendedBtn.style.display = "none";
+  }
+}
+
+function addToCartFromCart(id){
+  cart.push(products.find(p => p.id === id));
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
+recommendedBtn.addEventListener("click", loadRecommended);
+loadRecommended();
 
 </script>
 
