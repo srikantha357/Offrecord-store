@@ -3,10 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OFF Record Store</title>
+<title>OFF RECORD STORE</title>
 
-<link rel="stylesheet" href="css/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#000;
+  overflow-x:hidden;
+}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;
+  width:100%;
+  top:0;
+  left:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 8%;
+  z-index:1000;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(10px);
+  color:white;
+}
+
+.logo{
+  font-weight:700;
+  letter-spacing:4px;
+  font-size:22px;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:20px;
+  font-weight:500;
+}
+
+/* HERO SECTION */
+.hero{
+  position:relative;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* LEFT + RIGHT SLIDER */
+.slider{
+  position:absolute;
+  width:100%;
+  height:100%;
+  display:flex;
+}
+
+.slide{
+  flex:1;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transition:opacity 2s ease-in-out, transform 6s ease-in-out;
+  transform:scale(1.05);
+}
+
+.slide.active{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* Overlay */
+.hero::after{
+  content:'';
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:linear-gradient(to right, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+  top:0;
+  left:0;
+}
+
+/* Title */
+.hero h1{
+  position:relative;
+  color:white;
+  font-size:70px;
+  z-index:10;
+  letter-spacing:4px;
+  text-shadow:0 0 20px rgba(255,255,255,0.4);
+}
+
+/* SAKURA PETALS */
+.petal{
+  position:absolute;
+  width:12px;
+  height:12px;
+  background:pink;
+  border-radius:50%;
+  opacity:0.7;
+  animation:fall linear infinite;
+}
+
+@keyframes fall{
+  0%{ transform:translateY(-10vh) rotate(0deg); }
+  100%{ transform:translateY(110vh) rotate(360deg); }
+}
+
+/* PRODUCTS SECTION */
+.products{
+  padding:80px 8%;
+  background:url('assets/anime-bg.jpg') center/cover fixed;
+  position:relative;
+}
+
+.products::before{
+  content:'';
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  top:0;
+  left:0;
+}
+
+.product-grid{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:30px;
+}
+
+.load-more-container{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  margin-top:40px;
+}
+
+#load-more-btn{
+  padding:12px 30px;
+  background:black;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+/* Film grain */
+body::after{
+  content:'';
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity:0.08;
+  pointer-events:none;
+}
+</style>
 </head>
 
 <body>
@@ -18,19 +175,29 @@
     <a href="#">Shop</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <div class="nav-icons">
+  <div>
     <a href="account.html">My Account</a>
     <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
   </div>
 </header>
 
-<!-- HERO SLIDER -->
+<!-- HERO -->
 <section class="hero">
+
   <div class="slider">
-    <div class="slide active" style="background-image: url('assets/slide1.jpg');"></div>
-    <div class="slide" style="background-image: url('assets/slide2.jpg');"></div>
-    <div class="slide" style="background-image: url('assets/slide3.jpg');"></div>
+
+    <!-- LEFT SLIDES -->
+    <div class="slide active" style="background-image:url('assets/slide1.webp');"></div>
+    <div class="slide" style="background-image:url('assets/slide2.webp');"></div>
+    <div class="slide" style="background-image:url('assets/slide3.webp');"></div>
+
+    <!-- RIGHT SLIDES -->
+    <div class="slide active" style="background-image:url('assets/slide4.webp');"></div>
+    <div class="slide" style="background-image:url('assets/slide5.webp');"></div>
+    <div class="slide" style="background-image:url('assets/slide6.webp');"></div>
+
   </div>
+
   <h1>NEW ARRIVALS</h1>
 </section>
 
@@ -43,32 +210,35 @@
   </div>
 </section>
 
-<!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/919635493218" target="_blank" class="whatsapp-float">
-  <span>💬</span>
-</a>
-
-<!-- INSTAGRAM FLOAT -->
-<a href="https://instagram.com/offrecord_store" target="_blank" class="instagram-float">
-  <span>📸</span>
-</a>
-
-
-
-
 <script src="js/products.js"></script>
 <script src="js/app.js"></script>
 
 <script>
-/* HERO SLIDER */
-let slides = document.querySelectorAll(".slide");
-let currentSlide = 0;
 
-setInterval(() => {
-  slides[currentSlide].classList.remove("active");
-  currentSlide = (currentSlide + 1) % slides.length;
-  slides[currentSlide].classList.add("active");
-}, 4000);
+/* SLIDER LOGIC */
+let slides = document.querySelectorAll(".slide");
+let current = 0;
+
+setInterval(()=>{
+  slides[current].classList.remove("active");
+  current = (current+1) % slides.length;
+  slides[current].classList.add("active");
+},5000);
+
+/* SAKURA PETALS */
+function createPetal(){
+  const petal=document.createElement("div");
+  petal.classList.add("petal");
+  petal.style.left=Math.random()*100+"vw";
+  petal.style.animationDuration=5+Math.random()*5+"s";
+  petal.style.background=["#ffb7c5","#ffc0cb","#ff69b4"][Math.floor(Math.random()*3)];
+  document.body.appendChild(petal);
+
+  setTimeout(()=>{ petal.remove(); },10000);
+}
+
+setInterval(createPetal,400);
+
 </script>
 
 </body>
