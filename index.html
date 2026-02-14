@@ -15,6 +15,13 @@ body{
   background:#000;
   overflow-x:hidden;
   scroll-behavior:smooth;
+  opacity:0;
+  transition:opacity 0.6s ease;
+}
+
+/* Page Fade */
+body.loaded{
+  opacity:1;
 }
 
 /* CUSTOM CURSOR */
@@ -170,14 +177,6 @@ body{
   border-radius:12px;
 }
 
-.product-card h4{
-  color:white;
-}
-
-.product-card p{
-  color:#bbb;
-}
-
 .stock{
   font-size:13px;
   color:#ff7a9e;
@@ -228,17 +227,6 @@ body{
   gap:40px;
 }
 
-.footer a{
-  color:#aaa;
-  text-decoration:none;
-  display:block;
-  margin-bottom:8px;
-}
-
-.footer a:hover{
-  color:#ff7a9e;
-}
-
 .footer-bottom{
   text-align:center;
   margin-top:40px;
@@ -250,7 +238,6 @@ body{
 @media(max-width:1000px){
   .product-grid{grid-template-columns:repeat(2,1fr);}
 }
-
 @media(max-width:600px){
   .product-grid{grid-template-columns:1fr;}
 }
@@ -267,7 +254,7 @@ body{
   <nav>
     <a href="#">Home</a>
     <a href="#">Shop</a>
-    <a href="cart.html">Cart</a>
+    <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
     <a href="contact.html">Contact</a>
     <a href="account.html">My Account</a>
   </nav>
@@ -301,21 +288,21 @@ body{
     </div>
     <div>
       <h4>Quick Links</h4>
-      <a href="#">Home</a>
-      <a href="#">Shop</a>
-      <a href="cart.html">Cart</a>
-      <a href="contact.html">Contact</a>
+      <p>Home</p>
+      <p>Shop</p>
+      <p>Cart</p>
+      <p>Contact</p>
     </div>
     <div>
       <h4>Legal</h4>
-      <a href="#">Terms</a>
-      <a href="#">Privacy</a>
-      <a href="#">Refund</a>
+      <p>Terms</p>
+      <p>Privacy</p>
+      <p>Refund</p>
     </div>
     <div>
       <h4>Connect</h4>
-      <a href="#">Instagram</a>
-      <a href="#">WhatsApp</a>
+      <p>Instagram</p>
+      <p>WhatsApp</p>
     </div>
   </div>
   <div class="footer-bottom">
@@ -324,6 +311,11 @@ body{
 </footer>
 
 <script>
+
+/* Page Fade */
+window.onload = () => {
+  document.body.classList.add("loaded");
+};
 
 /* Cursor */
 document.addEventListener("mousemove",e=>{
@@ -351,6 +343,44 @@ function createPetal(){
 }
 setInterval(createPetal,1200);
 
+/* CART SYSTEM */
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+function updateCart(){
+  document.getElementById("cart-count").innerText=cart.length;
+}
+
+function addToCart(product){
+  let existing=cart.find(p=>p.id===product.id);
+  if(existing){existing.qty+=1;}
+  else{product.qty=1;cart.push(product);}
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+  flyToCart();
+}
+
+function flyToCart(){
+  const cartIcon=document.querySelector(".navbar a[href='cart.html']");
+  const dot=document.createElement("div");
+  dot.style.position="fixed";
+  dot.style.width="12px";
+  dot.style.height="12px";
+  dot.style.background="#ff4d6d";
+  dot.style.borderRadius="50%";
+  dot.style.zIndex="9999";
+  dot.style.left="50%";
+  dot.style.top="50%";
+  dot.style.transition="all 0.8s ease";
+  document.body.appendChild(dot);
+  setTimeout(()=>{
+    const rect=cartIcon.getBoundingClientRect();
+    dot.style.left=rect.left+"px";
+    dot.style.top=rect.top+"px";
+    dot.style.opacity="0";
+  },50);
+  setTimeout(()=>dot.remove(),900);
+}
+
 /* PRODUCTS */
 const container=document.getElementById("product-container");
 const loadBtn=document.getElementById("load-more-btn");
@@ -362,26 +392,23 @@ let perLoad=4;
 function loadProducts(){
   for(let i=shown+1;i<=shown+perLoad && i<=totalProducts;i++){
     let stock=Math.floor(Math.random()*20)+1;
-
     container.innerHTML+=`
       <div class="product-card">
         <img src="assets/tee${i}.webp">
         <h4>OVERSIZED TEE ${i}</h4>
         <p><del>₹999</del> ₹799</p>
         <div class="stock">Only ${stock} left 🔥</div>
-        <button class="add-btn">Add to Cart</button>
+        <button class="add-btn" onclick='addToCart({id:${i},name:"OVERSIZED TEE ${i}",price:799,image:"assets/tee${i}.webp"})'>Add to Cart</button>
       </div>
     `;
   }
-
   shown+=perLoad;
-
-  if(shown>=totalProducts){
-    loadBtn.style.display="none";
-  }
+  if(shown>=totalProducts){loadBtn.style.display="none";}
 }
 
 loadBtn.addEventListener("click",loadProducts);
+
+updateCart();
 loadProducts();
 
 </script>
