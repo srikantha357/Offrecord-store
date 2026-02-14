@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Contact - OFF RECORD STORE</title>
-
 <style>
 body{
   font-family:Arial;
@@ -39,87 +38,65 @@ button{
   font-size:20px;
   padding:40px;
 }
+.back{
+  display:block;
+  margin-top:20px;
+  text-align:center;
+}
 </style>
 </head>
 
 <body>
 
-<!-- Simple Navigation -->
-<div style="padding:15px; background:white; text-align:center;">
-  <a href="index.html">Home</a> |
-  <a href="index.html#shop">Shop</a> |
-  <a href="cart.html">Cart</a> |
-  <a href="contact.html">Contact</a>
-</div>
-
 <div class="container" id="formContainer">
   <h2>Contact Us</h2>
 
-  <input type="text" id="name" placeholder="Your Name" required>
-  <input type="email" id="email" placeholder="Your Email" required>
-  <textarea id="message" rows="5" placeholder="Your Message"></textarea>
+  <form id="contactForm">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+    <button type="submit">Send Enquiry</button>
+  </form>
 
-  <button id="sendBtn">Send Enquiry</button>
-
-  <br><br>
-  <a href="index.html">← Back to Home</a>
+  <a href="index.html" class="back">← Back to Home</a>
 </div>
 
 <script>
-const BACKEND_URL = "https://offrecord-backend.onrender.com";
 
-document.getElementById("sendBtn").addEventListener("click", sendEnquiry);
+// 🔥 PASTE YOUR FORMSPREE URL HERE
+const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
 
-async function sendEnquiry(){
+document.getElementById("contactForm").addEventListener("submit", async function(e){
+  e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const message = document.getElementById("message").value.trim();
-  const btn = document.getElementById("sendBtn");
+  const form = e.target;
+  const data = new FormData(form);
 
-  if(!name || !email || !message){
-    alert("Please fill all fields");
-    return;
-  }
-
-  btn.innerText = "Sending...";
-  btn.disabled = true;
-
-  try{
-
-    const res = await fetch(`${BACKEND_URL}/send-enquiry`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ name,email,message })
-    });
-
-    const data = await res.json();
-
-    if(data.success){
-
-      document.getElementById("formContainer").innerHTML = `
-        <div class="thank">
-          ✅ Thank you! We received your enquiry.<br><br>
-          Redirecting to Home...
-        </div>
-      `;
-
-      setTimeout(()=>{
-        window.location.href="index.html";
-      },5000);
-
-    } else {
-      alert("Error sending message");
-      btn.innerText = "Send Enquiry";
-      btn.disabled = false;
+  const response = await fetch(FORMSPREE_URL, {
+    method: "POST",
+    body: data,
+    headers: {
+      'Accept': 'application/json'
     }
+  });
 
-  } catch(err){
-    alert("Server error. Please try again.");
-    btn.innerText = "Send Enquiry";
-    btn.disabled = false;
+  if(response.ok){
+    document.getElementById("formContainer").innerHTML = `
+      <div class="thank">
+        ✅ Thank you! We received your enquiry.<br><br>
+        Redirecting to Home...
+      </div>
+    `;
+
+    setTimeout(()=>{
+      window.location.href="index.html";
+    },5000);
+
+  } else {
+    alert("Error sending message");
   }
-}
+});
+
 </script>
 
 </body>
