@@ -27,14 +27,43 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.log("DB Error:", err));
 
+/* ================= MODELS ================= */
+
+// Enquiry Model
 const enquirySchema = new mongoose.Schema({
   name: String,
   email: String,
   message: String,
   createdAt: { type: Date, default: Date.now }
 });
-
 const Enquiry = mongoose.model("Enquiry", enquirySchema);
+
+// Order Model
+const orderSchema = new mongoose.Schema({
+  customerName: String,
+  email: String,
+  phone: String,
+  items: [
+    {
+      productId: Number,
+      name: String,
+      price: Number,
+      quantity: Number
+    }
+  ],
+  totalAmount: Number,
+  razorpayOrderId: String,
+  razorpayPaymentId: String,
+  status: {
+    type: String,
+    default: "PENDING"
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+const Order = mongoose.model("Order", orderSchema);
 
 /* ================= RAZORPAY ================= */
 const razorpay = new Razorpay({
@@ -61,26 +90,30 @@ app.post("/create-order", async (req, res) => {
   try {
     const { amount } = req.body;
 
-    const order = await razorpay.orders.create({
+    const razorpayOrder = await razorpay.orders.create({
       amount: amount * 100,
       currency: "INR",
       receipt: "receipt_" + Date.now()
     });
 
-    res.json(order);
+    res.json(razorpayOrder);
+
   } catch (error) {
     res.status(500).json({ error: "Order creation failed" });
   }
 });
 
-/* ================= VERIFY PAYMENT + SEND INVOICE ================= */
+/* ================= VERIFY PAYMENT + SAVE ORDER ================= */
 app.post("/verify-payment", async (req, res) => {
   try {
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
+      customerName,
       email,
+      phone,
+      items,
       amount
     } = req.body;
 
@@ -93,15 +126,28 @@ app.post("/verify-payment", async (req, res) => {
       return res.status(400).json({ success: false });
     }
 
-    // Send Invoice Email
+    // ✅ SAVE ORDER IN MONGODB
+    const newOrder = await Order.create({
+      customerName,
+      email,
+      phone,
+      items,
+      totalAmount: amount,
+      razorpayOrderId: razorpay_order_id,
+      razorpayPaymentId: razorpay_payment_id,
+      status: "PAID"
+    });
+
+    // ✅ Send Invoice Email
     await transporter.sendMail({
       from: `"OFF RECORD STORE" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Payment Successful - Invoice",
+      subject: "Payment Successful - OFF RECORD STORE",
       html: `
         <h2>Thank you for your purchase 🎉</h2>
-        <p>Payment ID: ${razorpay_payment_id}</p>
-        <p>Amount Paid: ₹${amount}</p>
+        <p><b>Order ID:</b> ${newOrder._id}</p>
+        <p><b>Payment ID:</b> ${razorpay_payment_id}</p>
+        <p><b>Total Paid:</b> ₹${amount}</p>
         <p>Your order is being processed.</p>
       `
     });
@@ -109,6 +155,7 @@ app.post("/verify-payment", async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Verification failed" });
   }
 });
@@ -122,10 +169,8 @@ app.post("/send-enquiry", async (req, res) => {
       return res.status(400).json({ error: "Invalid Email" });
     }
 
-    // Save to DB
     await Enquiry.create({ name, email, message });
 
-    // Send to You
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
@@ -138,7 +183,6 @@ app.post("/send-enquiry", async (req, res) => {
       `
     });
 
-    // Auto Reply
     await transporter.sendMail({
       from: `"OFF RECORD STORE" <${process.env.EMAIL_USER}>`,
       to: email,
